@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "TangTangCharacter.generated.h"
+#include "Public/HitInterface.h"
 
+#include "TangTangCharacter.generated.h"
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -16,7 +17,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class ATangTangCharacter : public ACharacter
+class ATangTangCharacter : public ACharacter ,public IHitInterface
 {
 	GENERATED_BODY()
 
@@ -39,21 +40,38 @@ class ATangTangCharacter : public ACharacter
 
 public:
 	ATangTangCharacter();
-	
-
+	virtual void Tick(float DeltaTime) override;
+	virtual void GetHit(float Damage) override;
+	virtual void GetDamage(float Damage);
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
-
-protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
 	virtual void BeginPlay();
+private:
 
+	UPROPERTY(EditAnywhere)
+	float MaxHealth = 100.f;
+
+	UPROPERTY(EditAnywhere)
+	float Health = 100.f;
+
+	float Time = 0.f;
+
+	UPROPERTY()
+	class AMyHUD* MyHUD;
+
+	UPROPERTY()
+	class UCharacterOverlay* CharacterOverlay;
+
+	void WorldTime();
+	void HUDHealth(float GetHealth);
+	void Die();
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

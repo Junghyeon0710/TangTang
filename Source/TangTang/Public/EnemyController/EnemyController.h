@@ -19,5 +19,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 private:
 
+	/** 캐릭터 반경 몇에서 멈추나*/
+	UPROPERTY(EditAnywhere)
+	float Radius = -1;
 	
 };

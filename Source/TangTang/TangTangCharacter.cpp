@@ -10,6 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include <HUD/MyHUD.h>
+#include <HUD/CharacterOverlay.h>
+
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -18,6 +21,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ATangTangCharacter::ATangTangCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -56,6 +61,35 @@ ATangTangCharacter::ATangTangCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void ATangTangCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	WorldTime();
+}
+
+void ATangTangCharacter::GetHit(float Damage)
+{
+	Health -= -Damage;
+	if (Health <= 0)
+	{
+		Die();
+	}
+
+	HUDHealth(Health/MaxHealth);
+}
+
+void ATangTangCharacter::GetDamage(float Damage)
+{
+	Health -= Damage;
+	if (Health <= 0)
+	{
+		Die();
+	}
+
+	HUDHealth(Health / MaxHealth);
+}
+
 void ATangTangCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -69,7 +103,42 @@ void ATangTangCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	UE_LOG(LogTemp, Error, TEXT("%s"), *GetActorNameOrLabel());
+	
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		MyHUD = Cast<AMyHUD>(PlayerController->GetHUD());
+		if (MyHUD)
+		{
+			CharacterOverlay = MyHUD->GetCharacterOverlay();
+			if (CharacterOverlay)
+			{
+				CharacterOverlay->SetTime(0.f);
+				CharacterOverlay->SetHealthBar(100.f);
+			}
+		}
+	}
+}
+
+void ATangTangCharacter::WorldTime()
+{
+	if (CharacterOverlay)
+	{
+		CharacterOverlay->SetTime(Time += GetWorld()->GetDeltaSeconds());
+	}
+
+}
+
+void ATangTangCharacter::HUDHealth(float GetHealth)
+{
+	if (CharacterOverlay)
+	{
+		CharacterOverlay->SetHealthBar(GetHealth);
+	}
+}
+
+void ATangTangCharacter::Die()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -112,3 +181,4 @@ void ATangTangCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
+

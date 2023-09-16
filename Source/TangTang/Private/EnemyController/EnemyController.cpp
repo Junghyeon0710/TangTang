@@ -8,14 +8,11 @@
 void AEnemyController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
-
 }
 
 void AEnemyController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	MoveToActor(GetWorld()->GetFirstPlayerController(), 10.f);
+	MoveToActor(GetWorld()->GetFirstPlayerController(), Radius,false);
 }
 

@@ -4,6 +4,7 @@
 #include "TangTangCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
+
 ATangTangGameMode::ATangTangGameMode()
 {
 	// set default pawn class to our Blueprinted character

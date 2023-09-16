@@ -13,6 +13,10 @@ class ATangTangGameMode : public AGameModeBase
 
 public:
 	ATangTangGameMode();
+
+
+private:
+
 };
 
 
