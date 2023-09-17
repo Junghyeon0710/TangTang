@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include <HUD/MyHUD.h>
+#include <playerController/TangTangPlayerController.h>
 #include <HUD/CharacterOverlay.h>
 
 
@@ -68,17 +69,6 @@ void ATangTangCharacter::Tick(float DeltaTime)
 	WorldTime();
 }
 
-void ATangTangCharacter::GetHit(float Damage)
-{
-	Health -= -Damage;
-	if (Health <= 0)
-	{
-		Die();
-	}
-
-	HUDHealth(Health/MaxHealth);
-}
-
 void ATangTangCharacter::GetDamage(float Damage)
 {
 	Health -= Damage;
@@ -88,6 +78,25 @@ void ATangTangCharacter::GetDamage(float Damage)
 	}
 
 	HUDHealth(Health / MaxHealth);
+}
+
+void ATangTangCharacter::GetExp(float Exp)
+{
+	PlayerExp += Exp;
+	if (PlayerExp >= 100)
+	{
+		PlayerLevel++;
+		PlayerExp = 0;
+		PlayerMaxExp *= PlayerLevel;
+		HUDExp(0.f);
+		if (TangTangPlayerController)
+		{
+			TangTangPlayerController->CreateSkillWidget();
+		}
+		return;
+	}
+	
+	HUDExp(PlayerExp / PlayerMaxExp);
 }
 
 void ATangTangCharacter::BeginPlay()
@@ -104,10 +113,10 @@ void ATangTangCharacter::BeginPlay()
 		}
 	}
 	
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
+	TangTangPlayerController = Cast<ATangTangPlayerController>(GetController());
+	if (TangTangPlayerController)
 	{
-		MyHUD = Cast<AMyHUD>(PlayerController->GetHUD());
+		MyHUD = Cast<AMyHUD>(TangTangPlayerController->GetHUD());
 		if (MyHUD)
 		{
 			CharacterOverlay = MyHUD->GetCharacterOverlay();
@@ -115,6 +124,7 @@ void ATangTangCharacter::BeginPlay()
 			{
 				CharacterOverlay->SetTime(0.f);
 				CharacterOverlay->SetHealthBar(100.f);
+				CharacterOverlay->SetExpBar(0.f);
 			}
 		}
 	}
@@ -139,6 +149,15 @@ void ATangTangCharacter::HUDHealth(float GetHealth)
 
 void ATangTangCharacter::Die()
 {
+	Destroy();
+}
+
+void ATangTangCharacter::HUDExp(float GetExp)
+{
+	if (CharacterOverlay)
+	{
+		CharacterOverlay->SetExpBar(GetExp);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

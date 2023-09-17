@@ -17,12 +17,16 @@ public:
 
 	void SetHealthBar(float Health);
 	void SetTime(float DeltaTime);
+	void SetExpBar(float Exp);
 
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* HealthBar;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Time;
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* ExpBar;
 
 	
 };

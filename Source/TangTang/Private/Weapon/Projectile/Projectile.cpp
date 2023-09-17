@@ -5,12 +5,13 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include <Components/SphereComponent.h>
 #include <Enemy.h>
+#include <HitInterface.h>
 
 // Sets default values
 AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(SphereComponent);
@@ -33,13 +34,11 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 {
 	if (OtherActor && OtherActor->IsA(AEnemy::StaticClass()))
 	{
-		AEnemy* Enemy = Cast<AEnemy>(OtherActor);
-		if (Enemy)
+		IHitInterface* HitInterface = Cast<IHitInterface>(OtherActor);
+		if (HitInterface)
 		{
-			Enemy->Destroy();
+			HitInterface->GetHit(Damage);	
 			Destroy();
-			SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			
 		}
 	}
 }

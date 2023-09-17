@@ -5,6 +5,6 @@
 
 // Add default functionality here for any IHitInterface functions that are not pure virtual.
 
-void IHitInterface::GetHit(float Damage)
+void IHitInterface::GetHit(const float& Damage)
 {
 }

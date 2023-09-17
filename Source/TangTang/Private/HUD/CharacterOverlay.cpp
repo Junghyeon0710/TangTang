@@ -10,14 +10,20 @@ void UCharacterOverlay::SetHealthBar(float Health)
 {
 	if (HealthBar)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Health:%f"),Health);
 		HealthBar->SetPercent(Health);
 	}
-	
 }
 
 void UCharacterOverlay::SetTime(float DeltaTime)
 {
 	FString TimeSecond = FString::Printf(TEXT("%.2f"), DeltaTime);
 	Time->SetText(FText::FromString(TimeSecond));
+}
+
+void UCharacterOverlay::SetExpBar(float Exp)
+{
+	if (ExpBar)
+	{
+		ExpBar->SetPercent(Exp);
+	}
 }

@@ -7,6 +7,7 @@
 #include "AIController.h"
 #include <Components/BoxComponent.h>
 #include <TangTang/TangTangCharacter.h>
+#include <Item/SpawnExp.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -16,6 +17,12 @@ AEnemy::AEnemy()
 
 	OverlapBox = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapBox"));
 	OverlapBox->SetupAttachment(RootComponent);
+}
+
+void AEnemy::GetHit(const float& Damage)
+{
+	EnemyDie();
+	
 }
 
 // Called when the game starts or when spawned
@@ -29,15 +36,15 @@ void AEnemy::BeginPlay()
 
 void AEnemy::BoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor->IsA(ATangTangCharacter::StaticClass()))
+	if (OtherActor && OtherActor->IsA(ATangTangCharacter::StaticClass())) 
 	{
 		Character = Cast<ATangTangCharacter>(OtherActor);
 		if (Character)
-		{
-			Index++;
-			EndTimer.Add(FTimerHandle());
-			DamageTimer.Add(Index, OverlappedComp);
-			GetWorldTimerManager().SetTimer(EndTimer[Index], this, &AEnemy::Attack, DamageTime, true);
+		{	
+			Character->SetEnemyOverlap(true);
+			Character->SetOverlapNum(Character->GetOverlapNum() + 1);
+			Attack();
+			GetWorldTimerManager().SetTimer(EndTimer, this, &AEnemy::Attack, 1/ DamageTime, true); //1초마다 어택함수 호출
 		}
 	}
 }
@@ -46,18 +53,34 @@ void AEnemy::BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	if (OtherActor && OtherActor->IsA(ATangTangCharacter::StaticClass()))
 	{
-		if (DamageTimer.Num() > 0)
+		Character = Cast<ATangTangCharacter>(OtherActor);
+	
+		if (Character && Character->GetEnemyOverlap())
 		{
-			for (auto& Dmage : DamageTimer)
+			Character->SetEnemyOverlap(false);
+			Character->SetOverlapNum(Character->GetOverlapNum() -1);
+			if (Character->GetOverlapNum() < 0)
 			{
-				if (Dmage.Value == OverlappedComponent)
-				{
-					GetWorldTimerManager().ClearTimer(EndTimer[Dmage.Key]);
-				}
-
+				GetWorldTimerManager().ClearTimer(EndTimer);
 			}
 		}
+		if (Character->GetOverlapNum() > 0)
+		{
+			Character->SetEnemyOverlap(true);
+		}
+	}
+}
 
+void AEnemy::EnemyDie()
+{
+	if (SpawnExpclass)
+	{
+		SpawnExp = GetWorld()->SpawnActor<ASpawnExp>(SpawnExpclass, GetActorTransform());
+		if (SpawnExp)
+		{
+			SpawnExp->SetSpawnExp(EnemyExp);
+		}
+		Destroy();
 	}
 }
 
@@ -77,7 +100,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::Attack()
 {
-	if (Character)
+	if (Character && Character->GetEnemyOverlap())
 	{
 		Character->GetDamage(EnemyDamage);
 	}

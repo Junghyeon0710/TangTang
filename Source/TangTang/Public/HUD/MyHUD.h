@@ -15,13 +15,14 @@ class TANGTANG_API AMyHUD : public AHUD
 	GENERATED_BODY()
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadOnly)
+	class UCharacterOverlay* CharacterOverlay;
 private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCharacterOverlay> CharacterOverlayclass;
 
-	UPROPERTY()
-	class UCharacterOverlay* CharacterOverlay;
 public:
 	FORCEINLINE UCharacterOverlay* GetCharacterOverlay() const { return CharacterOverlay; }
 };

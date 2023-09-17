@@ -4,17 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "HitInterface.h"
 #include "Enemy.generated.h"
 
+
 UCLASS()
-class TANGTANG_API AEnemy : public ACharacter
+class TANGTANG_API AEnemy : public ACharacter , public IHitInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AEnemy();
-
+	virtual void GetHit(const float& Damage)override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,6 +28,8 @@ protected:
 	UFUNCTION()
 	virtual void BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	//적 죽을시
+	void EnemyDie();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -47,19 +51,36 @@ private:
 	UPROPERTY(EditAnywhere)
 	float EnemyDamage = 5.f;
 
-	TMap<int32, UPrimitiveComponent*> DamageTimer;
-	TArray<FTimerHandle> EndTimer;
+	//TArray<int32> DamageTimer;
+
+	FTimerHandle EndTimer;
 
 	void Attack();
+
+	bool OverlapCharacter = false;
 
 	UPROPERTY(EditAnywhere)
 	float DamageTime = 1.f;
 
-
-	int32 Index = -1;
-
-	int32 Overlaping = 0;
-
 	UPROPERTY()
 	class ATangTangCharacter* Character;
+
+
+	/** 적 체력 */
+	UPROPERTY(EditAnywhere)
+	float EnemyMaxHealth = 10.f;
+
+	UPROPERTY(EditAnywhere)
+	float EnemyHealth = 10.f;
+
+	//적 경험치
+	UPROPERTY(EditAnywhere)
+	float EnemyExp = 10.f;
+
+	/** 적 죽을시 경험치 액터 스폰*/
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ASpawnExp> SpawnExpclass;
+
+	UPROPERTY()
+	class ASpawnExp* SpawnExp = SpawnExp;
 };
