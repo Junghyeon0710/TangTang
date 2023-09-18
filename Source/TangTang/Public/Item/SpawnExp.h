@@ -27,7 +27,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* EXPMesh;
-
+	
 	UPROPERTY(VisibleAnywhere)
 	float SpawnExp = 0.f;
 

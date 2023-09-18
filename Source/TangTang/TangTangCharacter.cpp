@@ -13,6 +13,7 @@
 #include <HUD/MyHUD.h>
 #include <playerController/TangTangPlayerController.h>
 #include <HUD/CharacterOverlay.h>
+#include <SKill/Skill.h>
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -91,7 +92,8 @@ void ATangTangCharacter::GetExp(float Exp)
 		HUDExp(0.f);
 		if (TangTangPlayerController)
 		{
-			TangTangPlayerController->CreateSkillWidget();
+			TangTangPlayerController->CreateSkillWidget();	
+			Skill1Info();
 		}
 		return;
 	}
@@ -159,6 +161,44 @@ void ATangTangCharacter::HUDExp(float GetExp)
 		CharacterOverlay->SetExpBar(GetExp);
 	}
 }
+
+void ATangTangCharacter::Skill1Info()
+{
+	if (TangTangPlayerController == nullptr) return;
+	if (CharacterSkill.Num() < 0) return;
+	TArray<int32> SkillNumber;
+	for (int32 i = 0; i < 100; i++)
+	{
+		const int32 SkillIndex = FMath::RandRange(0, CharacterSkill.Num() - 1);
+		SkillNumber.AddUnique(SkillIndex);
+		if (SkillNumber.Num() == 3) break;
+	}
+	if (CharacterSkill[SkillNumber[0]].GetDefaultObject())
+	{
+		TangTangPlayerController->SetSkill(
+			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillImage(),
+			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillName(),
+			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillText(),
+			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillLevel());
+	}
+	if (CharacterSkill[SkillNumber[1]].GetDefaultObject())
+	{
+		TangTangPlayerController->SetSkill2(
+			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillImage(),
+			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillName(),
+			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillText(),
+			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillLevel());
+	}
+	if (CharacterSkill[SkillNumber[2]].GetDefaultObject())
+	{
+		TangTangPlayerController->SetSkill3(
+			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillImage(),
+			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillName(),
+			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillText(),
+			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillLevel());
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input

@@ -5,14 +5,23 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-
+#include "InputActionValue.h"
 #include "TangTangCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
-struct FInputActionValue;
+
+UENUM(BlueprintType)
+enum class ESkillName : uint8
+{
+	ESN_Guardian UMETA(Display = "Guardian"),
+	ESN_ProjectilePlus UMETA(Display = "ProjectilePlus"),
+	ESN_ProjectileSpeedUp UMETA(Display = "ProjectileSpeedUp"),
+
+	ESN_Max UMETA(Display = "Max"),
+};
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -87,6 +96,7 @@ private:
 	void HUDHealth(float GetHealth);
 	void Die();
 	void HUDExp(float GetExp);
+	void Skill1Info();
 
 	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess = "true"))
 	bool EnemyOverlap = false;
@@ -99,6 +109,14 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class ASkill>> CharacterSkill;
+
+
+	class UTexture2D* CharacterSkillImage;
+	FString CharacterSkillName;
+	FString CharacterSkillText;
+
+	ESkillName SkillName;
+
 
 public:
 	/** Returns CameraBoom subobject **/

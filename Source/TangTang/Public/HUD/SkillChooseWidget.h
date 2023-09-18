@@ -26,6 +26,9 @@ public:
 	class UTextBlock* Skill1Text;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Skill1Level;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Skill1Button;
 
 	UPROPERTY(meta = (BindWidget))
@@ -36,6 +39,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Skill2Text;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Skill2Level;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Skill2Button;
@@ -50,5 +56,10 @@ public:
 	class UTextBlock* Skill3Text;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Skill3Level;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Skill3Button;
+
+	/** 위젯을 하나 만들어 배열로 했으면 어땠을까 함*/
 };
