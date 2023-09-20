@@ -16,9 +16,28 @@ AWeapon::AWeapon()
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetRootComponent(WeaponMesh);
 
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
-	ArrowComponent->SetupAttachment(RootComponent);
+	ArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent1"));
+	ArrowComponent1->SetupAttachment(RootComponent);
+
+	ArrowComponent2 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent2"));
+	ArrowComponent2->SetupAttachment(RootComponent);
+
+	ArrowComponent3 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent3"));
+	ArrowComponent3->SetupAttachment(RootComponent);
+
+	ArrowComponent4 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent4"));
+	ArrowComponent4->SetupAttachment(RootComponent);
+
+	ArrowComponent5 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent5"));
+	ArrowComponent5->SetupAttachment(RootComponent);
+	
+	ArrowComponent.Add(ArrowComponent1);
+	ArrowComponent.Add(ArrowComponent2);
+	ArrowComponent.Add(ArrowComponent3);
+	ArrowComponent.Add(ArrowComponent4);
+	ArrowComponent.Add(ArrowComponent5);
 }
+
 
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
@@ -26,6 +45,7 @@ void AWeapon::BeginPlay()
 	Super::BeginPlay();
 	AttachWeapon();
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AWeapon::SpawnProjectile, 1 / SpawnTIme, true);
+
 }
 
 void AWeapon::AttachWeapon()
@@ -38,6 +58,7 @@ void AWeapon::AttachWeapon()
 		this->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("WeaponSocket"));
 		SetOwner(Character);
 		SetInstigator(Character);
+		Character->SetCharacterWeapon(this);
 	}
 
 }
@@ -49,11 +70,24 @@ void AWeapon::Tick(float DeltaTime)
 
 }
 
+void AWeapon::SetProJectileSpeed(const int TimeDelay)
+{
+	if (GetWorldTimerManager().IsTimerActive(SpawnTimer))
+	{
+		GetWorldTimerManager().ClearTimer(SpawnTimer);
+	}
+	SpawnTIme = TimeDelay;
+	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AWeapon::SpawnProjectile, 1 / SpawnTIme, true);
+}
+
 void AWeapon::SpawnProjectile()
 {
-	if (ProJectileClass)
-	{
-		Projectile = GetWorld()->SpawnActor<AProjectile>(ProJectileClass, ArrowComponent->GetComponentTransform());
+	if (ArrowIndex == 5) return;
+	if (ProJectileClass == nullptr) return;
+
+	for(int32 Arrowi = 0; Arrowi <= ArrowIndex; Arrowi++)
+	{	
+		Projectile = GetWorld()->SpawnActor<AProjectile>(ProJectileClass, ArrowComponent[Arrowi]->GetComponentTransform());
 		if (Projectile)
 		{
 			Projectile->SetLifeSpan(5.f);

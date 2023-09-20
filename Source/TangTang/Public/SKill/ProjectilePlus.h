@@ -13,5 +13,6 @@ UCLASS()
 class TANGTANG_API AProjectilePlus : public ASkill
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void SkillExecute(class ATangTangCharacter* Character) override;
 };

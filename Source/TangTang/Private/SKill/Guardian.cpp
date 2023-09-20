@@ -8,22 +8,24 @@
 #include <Components/SphereComponent.h>
 #include <HitInterface.h>
 
+
 AGuardian::AGuardian()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	RuardianRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	SetRootComponent(RuardianRoot);
+	GuardianRoot = CreateDefaultSubobject<USceneComponent>(TEXT("GuardainRoot"));
+	SetRootComponent(GuardianRoot);
 
-	SkillMesh->SetupAttachment(RootComponent);
-	SphereOverlap->SetupAttachment(SkillMesh);
+	SphereOverlap->SetupAttachment(RootComponent);
+	SkillMesh->SetupAttachment(SphereOverlap);
+
 }
 
 void AGuardian::BeginPlay()
 {
 	Super::BeginPlay();
 
-	 Character = Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
+	 TangTangCharacter = Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
 
 }
 
@@ -57,6 +59,15 @@ void AGuardian::SphereOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActo
 	}
 }
 
+void AGuardian::SkillExecute(ATangTangCharacter* Character)
+{
+	if (Character)
+	{
+		Character->GuardianSpawn();
+	}
+
+}
+
 void AGuardian::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -67,30 +78,15 @@ void AGuardian::Tick(float DeltaTime)
 
 void AGuardian::AroundCharacter()
 {
-	Character = Character == nullptr ? Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerPawn(this, 0)) : Character;
+	TangTangCharacter = TangTangCharacter == nullptr ? Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerPawn(this, 0)) : TangTangCharacter;
 
-	if (Character)
+	if (TangTangCharacter)
 	{
-		SetActorLocation(Character->GetActorLocation());
-		SkillMesh->SetRelativeLocation(
-			FVector(UKismetMathLibrary::DegCos(Time) * RadiusX,
-				UKismetMathLibrary::DegSin(Time) * RadiusY,
-				0.f));
-
-		if (GetWorld()->DeltaTimeSeconds * Speed + Time > 360.f)
-		{
-			Time = 0;
-		}
-		else
-		{
-			Time = GetWorld()->DeltaTimeSeconds * Speed + Time;
-		}
-		SetActorLocation(Character->GetActorLocation());
+		SetActorLocation(TangTangCharacter->GetActorLocation());
 		SphereOverlap->SetRelativeLocation(
 			FVector(UKismetMathLibrary::DegCos(Time) * RadiusX,
 				UKismetMathLibrary::DegSin(Time) * RadiusY,
 				0.f));
-
 		if (GetWorld()->DeltaTimeSeconds * Speed + Time > 360.f)
 		{
 			Time = 0;

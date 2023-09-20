@@ -8,9 +8,12 @@
 ASkill::ASkill()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SphereOverlap = CreateDefaultSubobject <USphereComponent>(TEXT("Overlap"));
+	SphereOverlap->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SphereOverlap->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	SphereOverlap->SetCollisionResponseToChannel(ECollisionChannel::ECC_Vehicle, ECollisionResponse::ECR_Overlap);
 	SetRootComponent(SphereOverlap);
 
 	SkillMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GuardianMEsh"));
@@ -25,6 +28,10 @@ void ASkill::BeginPlay()
 	
 	SphereOverlap->OnComponentBeginOverlap.AddDynamic(this, &ASkill::SphereBeginOverlap);
 	SphereOverlap->OnComponentEndOverlap.AddDynamic(this, &ASkill::SphereOverlapEnd);
+}
+
+void ASkill::SkillExecute(ATangTangCharacter* Character)
+{
 }
 
 void ASkill::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

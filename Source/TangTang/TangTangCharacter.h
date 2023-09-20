@@ -52,7 +52,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetDamage(float Damage);
 	virtual void GetExp(float Exp);
+	void GuardianSpawn();
 
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class ASkill>> CharacterSkill;
+
+	TArray<int32> SkillNumber;
 protected:
 
 	/** Called for movement input */
@@ -79,7 +84,7 @@ private:
 	float PlayerExp = 0;
 
 	UPROPERTY(EditAnywhere)
-	uint32 PlayerLevel = 0;
+	uint32 PlayerLevel = 1;
 
 	/** 플레이 시간*/
 	float Time = 0.f;
@@ -107,16 +112,17 @@ private:
 	UPROPERTY()
 	class ATangTangPlayerController* TangTangPlayerController;
 
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class ASkill>> CharacterSkill;
-
-
 	class UTexture2D* CharacterSkillImage;
 	FString CharacterSkillName;
 	FString CharacterSkillText;
 
 	ESkillName SkillName;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AGuardian> GuardianClass;
+
+	UPROPERTY()
+	class AWeapon* CharacterWeapon;
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -133,5 +139,8 @@ public:
 	FORCEINLINE void SetPlayerExp(float Exp) { PlayerExp = Exp; }
 	FORCEINLINE int32 GetPalyerLevel() const { return PlayerLevel; }
 	FORCEINLINE void SetPlayerLevel(int32 Level) { PlayerLevel = Level; }
+	FORCEINLINE AWeapon* GetCharacterWeapon() const { return CharacterWeapon; }
+	FORCEINLINE void SetCharacterWeapon(class AWeapon* Weapon) { CharacterWeapon = Weapon; }
+
 };
 

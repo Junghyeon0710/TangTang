@@ -9,6 +9,8 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSkillButtonDelegate);
+
 UCLASS()
 class TANGTANG_API ATangTangPlayerController : public APlayerController
 {
@@ -18,7 +20,16 @@ public:
 	void SetSkill(class UTexture2D* Image,const FString& Name ,const FString& Text,const FString& Level );
 	void SetSkill2(class UTexture2D* Image, const FString& Name, const FString& Text, const FString& Level);
 	void SetSkill3(class UTexture2D* Image, const FString& Name, const FString& Text, const FString& Level);
+	UFUNCTION()
+	void Skill1ButtonClick();
+	UFUNCTION()
+	void Skill2ButtonClick();
+	UFUNCTION()
+	void Skill3ButtonClick();
 	//void SkillInit();
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class USkillChooseWidget> SkillChooseWidgetClass;
@@ -26,4 +37,6 @@ private:
 	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess ="ture"))
 	class USkillChooseWidget* SkillChooseWidget;
 
+	UPROPERTY()
+	class ATangTangCharacter* TangTangCharacter;
 };

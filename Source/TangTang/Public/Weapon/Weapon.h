@@ -14,7 +14,7 @@ class TANGTANG_API AWeapon : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWeapon();
-
+	void SetProJectileSpeed(const int TimeDelay);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -29,7 +29,25 @@ private:
 	class UStaticMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* ArrowComponent;
+	TArray<class UArrowComponent*> ArrowComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent1;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent2;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent3;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent4;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ArrowComponent5;
+
+	UPROPERTY(VisibleAnywhere)
+	int32 ArrowIndex = 0;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AProjectile> ProJectileClass;
@@ -43,4 +61,9 @@ private:
 
 	UPROPERTY()
 	class AProjectile* Projectile;
+public:
+	FORCEINLINE float GetProjectileSpawnTime() const { return SpawnTIme; }
+	FORCEINLINE void SetProjectileSpawnTime(float Time) { SpawnTIme = Time; }
+	FORCEINLINE int32 GetArrowIndex() const { return ArrowIndex; }
+	FORCEINLINE void SetArrowIndex(int32 GetIndex) { ArrowIndex = GetIndex; }
 };

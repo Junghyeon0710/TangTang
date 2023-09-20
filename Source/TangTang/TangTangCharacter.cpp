@@ -14,6 +14,7 @@
 #include <playerController/TangTangPlayerController.h>
 #include <HUD/CharacterOverlay.h>
 #include <SKill/Skill.h>
+#include <SKill/Guardian.h>
 
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -84,7 +85,7 @@ void ATangTangCharacter::GetDamage(float Damage)
 void ATangTangCharacter::GetExp(float Exp)
 {
 	PlayerExp += Exp;
-	if (PlayerExp >= 100)
+	if (PlayerExp >= PlayerMaxExp)
 	{
 		PlayerLevel++;
 		PlayerExp = 0;
@@ -99,6 +100,15 @@ void ATangTangCharacter::GetExp(float Exp)
 	}
 	
 	HUDExp(PlayerExp / PlayerMaxExp);
+}
+
+void ATangTangCharacter::GuardianSpawn()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->SpawnActor<AGuardian>(GuardianClass, GetActorTransform());
+	}
 }
 
 void ATangTangCharacter::BeginPlay()
@@ -166,7 +176,8 @@ void ATangTangCharacter::Skill1Info()
 {
 	if (TangTangPlayerController == nullptr) return;
 	if (CharacterSkill.Num() < 0) return;
-	TArray<int32> SkillNumber;
+	if(SkillNumber.Num()>0) SkillNumber.Empty();
+		
 	for (int32 i = 0; i < 100; i++)
 	{
 		const int32 SkillIndex = FMath::RandRange(0, CharacterSkill.Num() - 1);

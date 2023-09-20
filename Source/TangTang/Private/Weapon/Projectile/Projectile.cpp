@@ -18,6 +18,10 @@ AProjectile::AProjectile()
 
 	Projectile = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile"));
 	Projectile->SetupAttachment(RootComponent);
+	Projectile->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Projectile->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	Projectile->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	Projectile->SetCollisionResponseToChannel(ECollisionChannel::ECC_Vehicle, ECollisionResponse::ECR_Block);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 }

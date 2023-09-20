@@ -2,4 +2,16 @@
 
 
 #include "SKill/ProjectileSpeedUp.h"
+#include <TangTang/TangTangCharacter.h>
+#include <Weapon/Weapon.h>
 
+void AProjectileSpeedUp::SkillExecute(ATangTangCharacter* Character)
+{
+	if (Character && Character->GetCharacterWeapon())
+	{
+		Character->GetCharacterWeapon()->SetProJectileSpeed(
+			Character->GetCharacterWeapon()->GetProjectileSpawnTime()
+			* 2
+		);
+	}
+}

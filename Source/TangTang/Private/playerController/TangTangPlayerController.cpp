@@ -6,6 +6,17 @@
 #include "Kismet/GameplayStatics.h"
 #include <Components/Image.h>
 #include <Components/TextBlock.h>
+#include <Components/Button.h>
+#include <TangTang/TangTangCharacter.h>
+#include <SKill/Skill.h>
+#include <SKill/Guardian.h>
+
+void ATangTangPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+}
 
 void ATangTangPlayerController::CreateSkillWidget()
 {
@@ -22,7 +33,13 @@ void ATangTangPlayerController::CreateSkillWidget()
 			InputModeUIOnly.SetWidgetToFocus(SkillChooseWidget->GetCachedWidget());
 			SetInputMode(InputModeUIOnly);
 			bShowMouseCursor = true;
-			
+
+			SkillChooseWidget->Skill1Button->OnClicked.AddDynamic(
+				this, &ATangTangPlayerController::Skill1ButtonClick);
+			SkillChooseWidget->Skill2Button->OnClicked.AddDynamic(
+				this, &ATangTangPlayerController::Skill2ButtonClick);
+			SkillChooseWidget->Skill3Button->OnClicked.AddDynamic(
+				this, &ATangTangPlayerController::Skill3ButtonClick);
 		}
 	}
 }
@@ -60,5 +77,60 @@ void ATangTangPlayerController::SetSkill3(UTexture2D* Image, const FString& Name
 
 	}
 }
+
+void ATangTangPlayerController::Skill1ButtonClick()
+{
+	if (SkillChooseWidget) SkillChooseWidget->RemoveFromParent();
+	UGameplayStatics::SetGamePaused(this,false);
+	FInputModeGameAndUI InputMode;
+	SetInputMode(InputMode);
+	TangTangCharacter = TangTangCharacter == nullptr ?
+		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
+		: TangTangCharacter;
+	if (TangTangCharacter)
+	{
+		TangTangCharacter->CharacterSkill
+			[TangTangCharacter->SkillNumber[0]].
+			GetDefaultObject()->SkillExecute(TangTangCharacter);
+	}
+	bShowMouseCursor = false;
+}
+
+void ATangTangPlayerController::Skill2ButtonClick()
+{
+	if (SkillChooseWidget) SkillChooseWidget->RemoveFromParent();
+	UGameplayStatics::SetGamePaused(this, false);
+	FInputModeGameAndUI InputMode;
+	SetInputMode(InputMode);
+	TangTangCharacter = TangTangCharacter == nullptr ?
+		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
+		: TangTangCharacter;
+	if (TangTangCharacter)
+	{
+		TangTangCharacter->CharacterSkill
+			[TangTangCharacter->SkillNumber[1]].
+			GetDefaultObject()->SkillExecute(TangTangCharacter);	
+	}
+	bShowMouseCursor = false;
+}
+
+void ATangTangPlayerController::Skill3ButtonClick()
+{
+	if (SkillChooseWidget) SkillChooseWidget->RemoveFromParent();
+	UGameplayStatics::SetGamePaused(this, false);
+	FInputModeGameAndUI InputMode;
+	SetInputMode(InputMode);
+	TangTangCharacter = TangTangCharacter == nullptr ?
+		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
+		: TangTangCharacter;
+	if (TangTangCharacter)
+	{
+		TangTangCharacter->CharacterSkill
+			[TangTangCharacter->SkillNumber[2]].
+			GetDefaultObject()->SkillExecute(TangTangCharacter);
+	}
+	bShowMouseCursor = false;
+}
+
 
 
