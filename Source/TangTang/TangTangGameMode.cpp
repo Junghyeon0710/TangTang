@@ -3,6 +3,7 @@
 #include "TangTangGameMode.h"
 #include "TangTangCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include <Kismet/GameplayStatics.h>
 
 
 ATangTangGameMode::ATangTangGameMode()
@@ -12,5 +13,14 @@ ATangTangGameMode::ATangTangGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}
+}
+
+void ATangTangGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	if (TangTangBGM)
+	{
+		UGameplayStatics::PlaySound2D(this, TangTangBGM);
 	}
 }

@@ -10,7 +10,7 @@
 AWeapon::AWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -82,12 +82,19 @@ void AWeapon::SetProJectileSpeed(const int TimeDelay)
 
 void AWeapon::SpawnProjectile()
 {
-	if (ArrowIndex == 5) return;
 	if (ProJectileClass == nullptr) return;
 
+	if (ArrowIndex == 5) ArrowIndex = 4;
 	for(int32 Arrowi = 0; Arrowi <= ArrowIndex; Arrowi++)
 	{	
 		Projectile = GetWorld()->SpawnActor<AProjectile>(ProJectileClass, ArrowComponent[Arrowi]->GetComponentTransform());
+		if (FireSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				this,
+				FireSound,
+				Projectile->GetActorLocation());
+		}
 		if (Projectile)
 		{
 			Projectile->SetLifeSpan(5.f);

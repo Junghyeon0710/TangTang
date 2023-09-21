@@ -31,20 +31,21 @@ void AGuardian::BeginPlay()
 
 void AGuardian::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
+	/*if (OtherActor)
 	{
 		HitInterface = Cast<IHitInterface>(OtherActor);
 		if (HitInterface)
 		{
 			HitInterface->GetHit(SkillDamage);
-		/*	GetWorldTimerManager().SetTimer(
+			GetWorldTimerManager().SetTimer(
 				GuardianDamageTimer,
 				this,
 				&AGuardian::GuardianDamage,
 				1 / GuardianDamageTiemDelay,
-				true);*/
+				true);
 		}
-	}
+	}*/
+	Super::SphereBeginOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 void AGuardian::SphereOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -65,7 +66,7 @@ void AGuardian::SkillExecute(ATangTangCharacter* Character)
 	{
 		Character->GuardianSpawn();
 	}
-
+	Super::SkillExecute(Character);
 }
 
 void AGuardian::Tick(float DeltaTime)

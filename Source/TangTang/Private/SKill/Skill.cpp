@@ -4,6 +4,7 @@
 #include "SKill/Skill.h"
 #include <Components/SphereComponent.h>
 #include <HitInterface.h>
+#include <Kismet/GameplayStatics.h>
 // Sets default values
 ASkill::ASkill()
 {
@@ -32,6 +33,13 @@ void ASkill::BeginPlay()
 
 void ASkill::SkillExecute(ATangTangCharacter* Character)
 {
+	if (SkillExecuteSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this,
+			SkillExecuteSound,
+			GetActorLocation());
+	}
 }
 
 void ASkill::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -42,6 +50,17 @@ void ASkill::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		if (HitInterface)
 		{
 			HitInterface->GetHit(SkillDamage);
+			if (SkillOverlapSound)
+			{
+				UGameplayStatics::PlaySound2D(this, SkillOverlapSound);
+			}
+			if (SkillOverlapParticle)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(
+					GetWorld(),
+					SkillOverlapParticle,
+					OtherActor->GetTransform());
+			}
 		}
 	}
 }

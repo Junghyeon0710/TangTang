@@ -61,6 +61,9 @@ private:
 
 	UPROPERTY()
 	class AProjectile* Projectile;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* FireSound;
 public:
 	FORCEINLINE float GetProjectileSpawnTime() const { return SpawnTIme; }
 	FORCEINLINE void SetProjectileSpawnTime(float Time) { SpawnTIme = Time; }

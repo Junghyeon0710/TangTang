@@ -6,7 +6,7 @@
 #include <Components/SphereComponent.h>
 #include <Enemy.h>
 #include <HitInterface.h>
-
+#include <Kismet/GameplayStatics.h>
 // Sets default values
 AProjectile::AProjectile()
 {
@@ -42,6 +42,22 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 		if (HitInterface)
 		{
 			HitInterface->GetHit(Damage);	
+			if (HitSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(
+					this,
+					HitSound,
+					OtherActor->GetActorLocation()
+				);
+			}
+			if (HitParticle)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(
+					GetWorld(),
+					HitParticle,
+					OtherActor->GetTransform()
+				);
+			}
 			Destroy();
 		}
 	}

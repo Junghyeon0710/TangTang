@@ -50,6 +50,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = SKill)
 	float SkillDamage = 10.f;
 
+	UPROPERTY(EditAnywhere)
+	class USoundBase* SkillExecuteSound;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* SkillOverlapSound;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* SkillOverlapParticle;
+
 private:
 
 /** 인라인함수 Get/Set */
