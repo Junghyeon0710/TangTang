@@ -15,7 +15,12 @@
 #include <HUD/CharacterOverlay.h>
 #include <SKill/Skill.h>
 #include <SKill/Guardian.h>
-
+#include <Components/BoxComponent.h>
+#include <Kismet/KismetMathLibrary.h>
+#include <SKill/Lightning.h>
+#include <Kismet/GameplayStatics.h>
+#include <Components/ArrowComponent.h>
+#include <SKill/Tornado.h>
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -62,6 +67,30 @@ ATangTangCharacter::ATangTangCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	LightningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LightningBox"));
+	LightningBox->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent1"));
+	TornadoArrowComponent1->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent2 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent2"));
+	TornadoArrowComponent2->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent3 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent3"));
+	TornadoArrowComponent3->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent4 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent4"));
+	TornadoArrowComponent4->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent5 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent5"));
+	TornadoArrowComponent5->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent.Add(TornadoArrowComponent1);
+	TornadoArrowComponent.Add(TornadoArrowComponent2);
+	TornadoArrowComponent.Add(TornadoArrowComponent3);
+	TornadoArrowComponent.Add(TornadoArrowComponent4);
+	TornadoArrowComponent.Add(TornadoArrowComponent5);
 }
 
 void ATangTangCharacter::Tick(float DeltaTime)
@@ -208,6 +237,32 @@ void ATangTangCharacter::Skill1Info()
 			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillText(),
 			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillLevel());
 	}
+	UE_LOG(LogTemp, Error, TEXT("index1 : %d index2 : %d , index3 : %d"),
+		SkillNumber[0], SkillNumber[1], SkillNumber[2]);
+}
+
+void ATangTangCharacter::SpawnTornado()
+{
+	if (TornadoClass)
+	{
+		for (int32 i = 0; i < TornadoIndex; i++)
+		{
+			ATornado* Torando = GetWorld()->SpawnActor<ATornado>(TornadoClass, TornadoArrowComponent[i]->GetComponentTransform());
+			if (Torando)
+			{
+				Torando->SetLifeSpan(5.f);
+			}
+			if (TornadoSound)
+			{
+				UGameplayStatics::PlaySound2D(this, TornadoSound);
+			}
+		}
+	}
+}
+
+void ATangTangCharacter::SpawnTorandoTimer()
+{
+	GetWorldTimerManager().SetTimer(TornadoTimer, this, &ATangTangCharacter::SpawnTornado, 1 / TornadoDelay, true, 4.f);
 }
 
 
@@ -227,6 +282,37 @@ void ATangTangCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void ATangTangCharacter::SpawnLightning()
+{
+	if (LightningClass)
+	{
+		for (int32 i = 0; i < LightningLevel; i++)
+		{
+			FVector LightningSpawnPoint = UKismetMathLibrary::RandomPointInBoundingBox(
+				LightningBox->GetComponentLocation(), LightningBox->GetScaledBoxExtent()
+			);
+			ALightning* Lightning = GetWorld()->SpawnActor<ALightning>(LightningClass, FTransform(LightningSpawnPoint));
+			if (Lightning) Lightning->SetLifeSpan(1.f);
+			if (LightningSound)
+			{
+				UGameplayStatics::PlaySound2D(this, LightningSound);
+			}
+		}
+
+
+	}
+}
+
+void ATangTangCharacter::SpawnLightningTimer()
+{
+	GetWorldTimerManager().SetTimer(
+		LightningTimer,
+		this,
+		&ATangTangCharacter::SpawnLightning,
+		1 / LightningTimeDelay,
+		true, 5.f);
 }
 
 void ATangTangCharacter::Move(const FInputActionValue& Value)

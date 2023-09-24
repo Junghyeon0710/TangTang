@@ -53,11 +53,15 @@ public:
 	virtual void GetDamage(float Damage);
 	virtual void GetExp(float Exp);
 	void GuardianSpawn();
-
+	void HUDHealth(float GetHealth);
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class ASkill>> CharacterSkill;
 
 	TArray<int32> SkillNumber;
+	void SpawnLightning();
+	void SpawnLightningTimer();
+	void SpawnTornado();
+	void SpawnTorandoTimer();
 protected:
 
 	/** Called for movement input */
@@ -98,7 +102,6 @@ private:
 
 
 	void WorldTime();
-	void HUDHealth(float GetHealth);
 	void Die();
 	void HUDExp(float GetExp);
 	void Skill1Info();
@@ -124,6 +127,58 @@ private:
 	UPROPERTY()
 	class AWeapon* CharacterWeapon;
 
+	/** 번개 스킬*/
+
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* LightningBox;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ALightning> LightningClass;
+
+	FTimerHandle LightningTimer;
+
+	UPROPERTY(EditAnywhere)
+	float LightningTimeDelay = .5f;
+
+	UPROPERTY(VisibleAnywhere)
+	int32 LightningLevel = 0;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* LightningSound;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<class UArrowComponent*> TornadoArrowComponent;
+
+	/** 토네이토 스킬*/
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* TornadoArrowComponent1;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* TornadoArrowComponent2;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* TornadoArrowComponent3;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* TornadoArrowComponent4;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* TornadoArrowComponent5;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ATornado> TornadoClass;
+
+	UPROPERTY(EditAnywhere)
+	int32 TornadoIndex = 0;
+
+	FTimerHandle TornadoTimer;
+
+	UPROPERTY(EditAnywhere)
+	float TornadoDelay = 0.25;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* TornadoSound;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -141,6 +196,13 @@ public:
 	FORCEINLINE void SetPlayerLevel(int32 Level) { PlayerLevel = Level; }
 	FORCEINLINE AWeapon* GetCharacterWeapon() const { return CharacterWeapon; }
 	FORCEINLINE void SetCharacterWeapon(class AWeapon* Weapon) { CharacterWeapon = Weapon; }
-
+	FORCEINLINE float GetHealth() const { return Health; }
+	FORCEINLINE void SetHealth(float GetHealth) { Health = GetHealth; }
+	FORCEINLINE float GetMaxHelath() const { return MaxHealth; }
+	FORCEINLINE void SetMaxHealth(float GetMaxHealth) { MaxHealth = GetMaxHealth; }
+	FORCEINLINE int32 GetLightningLevel() const { return LightningLevel; }
+	FORCEINLINE void SetLightningLevel(int32 Level) { LightningLevel = Level; }
+	FORCEINLINE int32 GetTornadoIndex() const { return TornadoIndex; }
+	FORCEINLINE void SetTornadoIndex(int32 Index) { TornadoIndex = Index; }
 };
 

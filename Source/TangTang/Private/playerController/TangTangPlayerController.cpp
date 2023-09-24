@@ -87,13 +87,14 @@ void ATangTangPlayerController::Skill1ButtonClick()
 	TangTangCharacter = TangTangCharacter == nullptr ?
 		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
 		: TangTangCharacter;
+	bShowMouseCursor = false;
 	if (TangTangCharacter)
 	{
 		TangTangCharacter->CharacterSkill
 			[TangTangCharacter->SkillNumber[0]].
 			GetDefaultObject()->SkillExecute(TangTangCharacter);
 	}
-	bShowMouseCursor = false;
+
 }
 
 void ATangTangPlayerController::Skill2ButtonClick()
@@ -105,13 +106,14 @@ void ATangTangPlayerController::Skill2ButtonClick()
 	TangTangCharacter = TangTangCharacter == nullptr ?
 		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
 		: TangTangCharacter;
+	bShowMouseCursor = false;
 	if (TangTangCharacter)
 	{
 		TangTangCharacter->CharacterSkill
 			[TangTangCharacter->SkillNumber[1]].
 			GetDefaultObject()->SkillExecute(TangTangCharacter);	
 	}
-	bShowMouseCursor = false;
+	
 }
 
 void ATangTangPlayerController::Skill3ButtonClick()
@@ -123,13 +125,14 @@ void ATangTangPlayerController::Skill3ButtonClick()
 	TangTangCharacter = TangTangCharacter == nullptr ?
 		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
 		: TangTangCharacter;
+	bShowMouseCursor = false;
 	if (TangTangCharacter)
 	{
 		TangTangCharacter->CharacterSkill
 			[TangTangCharacter->SkillNumber[2]].
 			GetDefaultObject()->SkillExecute(TangTangCharacter);
 	}
-	bShowMouseCursor = false;
+
 }
 
 
