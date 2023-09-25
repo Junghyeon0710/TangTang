@@ -5,6 +5,7 @@
 #include <Components/BoxComponent.h>
 #include <Enemy.h>
 #include <Kismet/KismetMathLibrary.h>
+#include <Item/HealthBox.h>
 
 // Sets default values
 ASpawnPoint::ASpawnPoint()
@@ -21,6 +22,7 @@ void ASpawnPoint::BeginPlay()
 	Super::BeginPlay();
 	
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnPoint::SpawnEnemy, 1/SpawnTimeDelay, true);
+	GetWorldTimerManager().SetTimer(HealthBoxSpawnTimer, this, &ASpawnPoint::SpawnHealthBox, HealthBoxSpawnTimeDelay, true,1.f);
 }
 
 void ASpawnPoint::SpawnEnemy()
@@ -29,6 +31,21 @@ void ASpawnPoint::SpawnEnemy()
 	{
 		FVector BoxRandomPoint = UKismetMathLibrary::RandomPointInBoundingBox(SpawnPoint->GetComponentLocation(), SpawnPoint->GetScaledBoxExtent()); 
 		GetWorld()->SpawnActor<AEnemy>(EnemyClass, FTransform(BoxRandomPoint));
+	}
+}
+
+void ASpawnPoint::SpawnHealthBox()
+{
+	if (HealthBoxClass)
+	{
+		FVector BoxRandomPoint = UKismetMathLibrary::RandomPointInBoundingBox(SpawnPoint->GetComponentLocation(), SpawnPoint->GetScaledBoxExtent());
+		AHealthBox* HealthBox = GetWorld()->SpawnActor<AHealthBox>(HealthBoxClass, FTransform(BoxRandomPoint));
+		FVector HelathBoxLocation = BoxRandomPoint;
+		HelathBoxLocation.Z = 20;
+		if (HealthBox)
+		{
+			HealthBox->SetActorLocation(HelathBoxLocation);
+		}
 	}
 }
 

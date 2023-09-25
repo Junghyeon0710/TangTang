@@ -19,7 +19,7 @@ protected:
 
 private:
 
-	/** 적 스폰 위치*/
+	/** 적,힐박스 스폰 위치*/
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* SpawnPoint;
 
@@ -36,6 +36,22 @@ private:
 	/** 1초에 적 몇명 스폰*/
 	UPROPERTY(EditAnywhere)
 	float SpawnTimeDelay = 1;
+
+	/** 힐박스*/
+
+	/** 힐 클래스 */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AHealthBox> HealthBoxClass;
+
+	/** 적 스폰 */
+	virtual void SpawnHealthBox();
+
+	/** 스폰 타이퍼*/
+	FTimerHandle HealthBoxSpawnTimer;
+
+	/** 1초에 적 몇명 스폰*/
+	UPROPERTY(EditAnywhere)
+	float HealthBoxSpawnTimeDelay = 180;
 
 public:	
 	

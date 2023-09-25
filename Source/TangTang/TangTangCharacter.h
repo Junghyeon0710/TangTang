@@ -62,6 +62,8 @@ public:
 	void SpawnLightningTimer();
 	void SpawnTornado();
 	void SpawnTorandoTimer();
+	void SpawnMolotovcoktail();
+	void SpawnMolotovcoktailTimer();
 protected:
 
 	/** Called for movement input */
@@ -128,7 +130,6 @@ private:
 	class AWeapon* CharacterWeapon;
 
 	/** 번개 스킬*/
-
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* LightningBox;
 
@@ -146,10 +147,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	class USoundBase* LightningSound;
 
+
+	/** 토네이토 스킬*/
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UArrowComponent*> TornadoArrowComponent;
 
-	/** 토네이토 스킬*/
 	UPROPERTY(VisibleAnywhere)
 	class UArrowComponent* TornadoArrowComponent1;
 
@@ -179,6 +181,40 @@ private:
 	UPROPERTY(EditAnywhere)
 	class USoundBase* TornadoSound;
 
+	/** 화염병 스킬*/
+	UPROPERTY(VisibleAnywhere)
+	TArray<class UArrowComponent*> MolotovococktailArrowComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* MolotovococktailArrowComponent1;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* MolotovococktailArrowComponent2;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* MolotovococktailArrowComponent3;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* MolotovococktailArrowComponent4;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* MolotovococktailArrowComponent5;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AMolotovcocktail> MolotovcocktailClass;
+
+	UPROPERTY(EditAnywhere)
+	int32 MolotovcocktaillIndex = 0;
+
+	FTimerHandle MolotovcocktailTimer;
+
+	UPROPERTY(EditAnywhere)
+	float MolotovcocktailDelay = 0.18;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* MolotovcocktailSound;
+
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -204,5 +240,7 @@ public:
 	FORCEINLINE void SetLightningLevel(int32 Level) { LightningLevel = Level; }
 	FORCEINLINE int32 GetTornadoIndex() const { return TornadoIndex; }
 	FORCEINLINE void SetTornadoIndex(int32 Index) { TornadoIndex = Index; }
+	FORCEINLINE int32 GetMolotovconcktailIndex() const { return MolotovcocktaillIndex; }
+	FORCEINLINE void SetMolotovconcktailIndex(int32 Index) { MolotovcocktaillIndex = Index; }
 };
 

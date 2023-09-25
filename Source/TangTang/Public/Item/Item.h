@@ -16,11 +16,26 @@ public:
 	AItem();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
+	virtual void BeginPlay() override;
+	UFUNCTION()
+	virtual void SphereBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* SphereOverlap;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* ItemMesh;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* OverlapSound;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* OverlapParticle;
 public:	
-	// Called every frame
+
 	virtual void Tick(float DeltaTime) override;
 	
+private:
+
 };

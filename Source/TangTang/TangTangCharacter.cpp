@@ -21,6 +21,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <Components/ArrowComponent.h>
 #include <SKill/Tornado.h>
+#include <Skill/Molotovcocktail.h>
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -68,9 +69,11 @@ ATangTangCharacter::ATangTangCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
+
 	LightningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LightningBox"));
 	LightningBox->SetupAttachment(RootComponent);
 
+	/** 토네이도 */
 	TornadoArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent1"));
 	TornadoArrowComponent1->SetupAttachment(RootComponent);
 
@@ -91,6 +94,30 @@ ATangTangCharacter::ATangTangCharacter()
 	TornadoArrowComponent.Add(TornadoArrowComponent3);
 	TornadoArrowComponent.Add(TornadoArrowComponent4);
 	TornadoArrowComponent.Add(TornadoArrowComponent5);
+
+	/** 화염병 */
+	MolotovococktailArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent1"));
+	MolotovococktailArrowComponent1->SetupAttachment(RootComponent);
+
+	MolotovococktailArrowComponent2 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent2"));
+	MolotovococktailArrowComponent2->SetupAttachment(RootComponent);
+
+	MolotovococktailArrowComponent3 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent3"));
+	MolotovococktailArrowComponent3->SetupAttachment(RootComponent);
+
+	MolotovococktailArrowComponent4 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent4"));
+	MolotovococktailArrowComponent4->SetupAttachment(RootComponent);
+
+	MolotovococktailArrowComponent5 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent5"));
+	MolotovococktailArrowComponent5->SetupAttachment(RootComponent);
+
+	TornadoArrowComponent.Add(MolotovococktailArrowComponent1);
+	TornadoArrowComponent.Add(MolotovococktailArrowComponent2);
+	TornadoArrowComponent.Add(MolotovococktailArrowComponent3);
+	TornadoArrowComponent.Add(MolotovococktailArrowComponent4);
+	TornadoArrowComponent.Add(MolotovococktailArrowComponent5);
+
+
 }
 
 void ATangTangCharacter::Tick(float DeltaTime)
@@ -265,8 +292,29 @@ void ATangTangCharacter::SpawnTorandoTimer()
 	GetWorldTimerManager().SetTimer(TornadoTimer, this, &ATangTangCharacter::SpawnTornado, 1 / TornadoDelay, true, 4.f);
 }
 
+void ATangTangCharacter::SpawnMolotovcoktail()
+{
+	if (MolotovcocktailClass)
+	{
+		for (int32 i = 0; i < MolotovcocktaillIndex; i++)
+		{
+			AMolotovcocktail* Molotovcocktail = GetWorld()->SpawnActor<AMolotovcocktail>(MolotovcocktailClass, TornadoArrowComponent[i]->GetComponentTransform());
+			if (MolotovcocktailSound)
+			{
+				UGameplayStatics::PlaySound2D(this, TornadoSound);
+			}
+		}
+	}
+}
 
-//////////////////////////////////////////////////////////////////////////
+void ATangTangCharacter::SpawnMolotovcoktailTimer()
+{
+	GetWorldTimerManager().SetTimer(MolotovcocktailTimer, this, &ATangTangCharacter::SpawnMolotovcoktail, 1 / MolotovcocktailDelay, true, 4.f);
+
+}
+
+
+///////////////////////////////F///////////////////////////////////////////
 // Input
 
 void ATangTangCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
