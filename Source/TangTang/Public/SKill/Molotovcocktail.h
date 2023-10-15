@@ -16,16 +16,18 @@ class TANGTANG_API AMolotovcocktail : public ASkill
 public:
 	AMolotovcocktail();
 	virtual void SkillExecute(class ATangTangCharacter* Character) override;
+
 protected:
 	virtual void BeginPlay() override;
+	
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-private:
 
+private:
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class UParticleSystemComponent* FireParticle;
 
 	UPROPERTY(EditAnywhere)
@@ -37,3 +39,4 @@ private:
 	UPROPERTY(EditAnywhere)
 	class USoundBase* SpawnFireSound;
 };
+ 

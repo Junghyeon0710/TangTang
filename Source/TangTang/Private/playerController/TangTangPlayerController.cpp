@@ -14,8 +14,6 @@
 void ATangTangPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 }
 
 void ATangTangPlayerController::CreateSkillWidget()
@@ -33,107 +31,75 @@ void ATangTangPlayerController::CreateSkillWidget()
 			InputModeUIOnly.SetWidgetToFocus(SkillChooseWidget->GetCachedWidget());
 			SetInputMode(InputModeUIOnly);
 			bShowMouseCursor = true;
-
+			FOnButtonClickedEvent OnButtonClickedEvent;
+			
 			SkillChooseWidget->Skill1Button->OnClicked.AddDynamic(
-				this, &ATangTangPlayerController::Skill1ButtonClick);
+				this, &ATangTangPlayerController::OnSkill1ButtonClick);
 			SkillChooseWidget->Skill2Button->OnClicked.AddDynamic(
-				this, &ATangTangPlayerController::Skill2ButtonClick);
+				this, &ATangTangPlayerController::OnSkill2ButtonClick);
 			SkillChooseWidget->Skill3Button->OnClicked.AddDynamic(
-				this, &ATangTangPlayerController::Skill3ButtonClick);
+				this, &ATangTangPlayerController::OnSkill3ButtonClick);
 		}
 	}
 }
 
-void ATangTangPlayerController::SetSkill(UTexture2D* Image, const FString& Name, const FString& Text,const FString& Level)
+void ATangTangPlayerController::SetSkill(UTexture2D* Image, const FString& Name, const FString& Text,const FString& Level,const int32& SkillSlot)
 {
-	if (SkillChooseWidget)
+	if (SkillChooseWidget && SkillSlot >= 0 && SkillSlot < 3)
 	{
-		SkillChooseWidget->Skill1Image->SetBrushFromTexture(Image);
-		SkillChooseWidget->Skill1Name->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Name)));
-		SkillChooseWidget->Skill1Text->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Text)));
-		SkillChooseWidget->Skill1Level->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Level)));
+		if (SkillSlot == 0)
+		{
+			SkillChooseWidget->Skill1Image->SetBrushFromTexture(Image);
+			SkillChooseWidget->Skill1Name->SetText(FText::FromString(Name));
+			SkillChooseWidget->Skill1Text->SetText(FText::FromString(Text));
+			SkillChooseWidget->Skill1Level->SetText(FText::FromString(Level));
+		}
+		else if (SkillSlot == 1)
+		{
+			SkillChooseWidget->Skill2Image->SetBrushFromTexture(Image);
+			SkillChooseWidget->Skill2Name->SetText(FText::FromString(Name));
+			SkillChooseWidget->Skill2Text->SetText(FText::FromString(Text));
+			SkillChooseWidget->Skill2Level->SetText(FText::FromString(Level));
+		}
+		else if (SkillSlot == 2)
+		{
+			SkillChooseWidget->Skill3Image->SetBrushFromTexture(Image);
+			SkillChooseWidget->Skill3Name->SetText(FText::FromString(Name));
+			SkillChooseWidget->Skill3Text->SetText(FText::FromString(Text));
+			SkillChooseWidget->Skill3Level->SetText(FText::FromString(Level));
+		}
 	}
 }
 
-void ATangTangPlayerController::SetSkill2(UTexture2D* Image, const FString& Name, const FString& Text, const FString& Level)
+
+
+void ATangTangPlayerController::OnSkill1ButtonClick()
 {
-	if (SkillChooseWidget)
-	{
-		SkillChooseWidget->Skill2Image->SetBrushFromTexture(Image);
-		SkillChooseWidget->Skill2Name->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Name)));
-		SkillChooseWidget->Skill2Text->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Text)));
-		SkillChooseWidget->Skill2Level->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Level)));
-	}
+	WhatSkillButtonClick(0);
 }
 
-void ATangTangPlayerController::SetSkill3(UTexture2D* Image, const FString& Name, const FString& Text, const FString& Level)
+void ATangTangPlayerController::OnSkill2ButtonClick()
 {
-	if (SkillChooseWidget)
-	{
-		SkillChooseWidget->Skill3Image->SetBrushFromTexture(Image);
-		SkillChooseWidget->Skill3Name->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Name)));
-		SkillChooseWidget->Skill3Text->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Text)));
-		SkillChooseWidget->Skill3Level ->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Level)));
-
-	}
+	WhatSkillButtonClick(1);
 }
 
-void ATangTangPlayerController::Skill1ButtonClick()
+void ATangTangPlayerController::OnSkill3ButtonClick()
 {
-	if (SkillChooseWidget) SkillChooseWidget->RemoveFromParent();
-	UGameplayStatics::SetGamePaused(this,false);
-	FInputModeGameAndUI InputMode;
-	SetInputMode(InputMode);
-	TangTangCharacter = TangTangCharacter == nullptr ?
-		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
-		: TangTangCharacter;
-	bShowMouseCursor = false;
+	WhatSkillButtonClick(2);
+}
+
+void ATangTangPlayerController::WhatSkillButtonClick(const int32& SkillSlot)
+{
+	if (SkillChooseWidget == nullptr || SkillSlot < 0 || SkillSlot >= 3) return;
+
+	TangTangCharacter = TangTangCharacter ? TangTangCharacter : Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 	if (TangTangCharacter)
 	{
-		TangTangCharacter->CharacterSkill
-			[TangTangCharacter->SkillNumber[0]].
-			GetDefaultObject()->SkillExecute(TangTangCharacter);
+		SkillChooseWidget->RemoveFromParent();
+		bShowMouseCursor = false;
+		TangTangCharacter->CharacterSkill[TangTangCharacter->SkillNumber[SkillSlot]].GetDefaultObject()->SkillExecute(TangTangCharacter);
+		UGameplayStatics::SetGamePaused(this, false);
+		FInputModeGameAndUI InputMode;
+		SetInputMode(InputMode);
 	}
-
 }
-
-void ATangTangPlayerController::Skill2ButtonClick()
-{
-	if (SkillChooseWidget) SkillChooseWidget->RemoveFromParent();
-	UGameplayStatics::SetGamePaused(this, false);
-	FInputModeGameAndUI InputMode;
-	SetInputMode(InputMode);
-	TangTangCharacter = TangTangCharacter == nullptr ?
-		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
-		: TangTangCharacter;
-	bShowMouseCursor = false;
-	if (TangTangCharacter)
-	{
-		TangTangCharacter->CharacterSkill
-			[TangTangCharacter->SkillNumber[1]].
-			GetDefaultObject()->SkillExecute(TangTangCharacter);	
-	}
-	
-}
-
-void ATangTangPlayerController::Skill3ButtonClick()
-{
-	if (SkillChooseWidget) SkillChooseWidget->RemoveFromParent();
-	UGameplayStatics::SetGamePaused(this, false);
-	FInputModeGameAndUI InputMode;
-	SetInputMode(InputMode);
-	TangTangCharacter = TangTangCharacter == nullptr ?
-		Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0))
-		: TangTangCharacter;
-	bShowMouseCursor = false;
-	if (TangTangCharacter)
-	{
-		TangTangCharacter->CharacterSkill
-			[TangTangCharacter->SkillNumber[2]].
-			GetDefaultObject()->SkillExecute(TangTangCharacter);
-	}
-
-}
-
-
-

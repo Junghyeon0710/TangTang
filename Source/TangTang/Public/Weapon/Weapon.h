@@ -12,61 +12,49 @@ class TANGTANG_API AWeapon : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AWeapon();
+	/** 프로젝타일 속도 설정 함수 */
 	void SetProJectileSpeed(const int TimeDelay);
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/** 무기를 캐릭터에 부착하는 함수 */
 	void AttachWeapon();
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
 private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* WeaponMesh;
 
+	/** 프로젝타일을 발사하는 위치를 알려주는 화살 컴포넌트 배열 */
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UArrowComponent*> ArrowComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* ArrowComponent1;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* ArrowComponent2;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* ArrowComponent3;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* ArrowComponent4;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* ArrowComponent5;
-
-	UPROPERTY(VisibleAnywhere)
 	int32 ArrowIndex = 0;
 
+	/** 프로젝타일 클래스 */
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AProjectile> ProJectileClass;
+	TSubclassOf<class AProjectile> ProjectileClass;
 
+	/** 프로젝타일 스폰 타이머 핸들 */
 	FTimerHandle SpawnTimer;
 
 	UPROPERTY(EditAnywhere)
-	float SpawnTIme = 1;
+	float SpawnTime = 1;
 
 	void SpawnProjectile();
+
 
 	UPROPERTY()
 	class AProjectile* Projectile;
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* FireSound;
+
 public:
-	FORCEINLINE float GetProjectileSpawnTime() const { return SpawnTIme; }
-	FORCEINLINE void SetProjectileSpawnTime(float Time) { SpawnTIme = Time; }
-	FORCEINLINE int32 GetArrowIndex() const { return ArrowIndex; }
-	FORCEINLINE void SetArrowIndex(int32 GetIndex) { ArrowIndex = GetIndex; }
+	FORCEINLINE float GetProjectileSpawnTime() const { return SpawnTime; }
+	FORCEINLINE void SetProjectileSpawnTime(float Time) { SpawnTime = Time; }
+	FORCEINLINE void IncreaseArrowIndex() { ArrowIndex++; }
 };

@@ -13,7 +13,7 @@ class TANGTANG_API ASpawnPoint : public AActor
 	
 public:	
 	ASpawnPoint();
-	virtual void Tick(float DeltaTime) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -37,8 +37,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SpawnTimeDelay = 1;
 
-	/** Èú¹Ú½º*/
-
 	/** Èú Å¬·¡½º */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AHealthBox> HealthBoxClass;
@@ -53,7 +51,4 @@ private:
 	UPROPERTY(EditAnywhere)
 	float HealthBoxSpawnTimeDelay = 180;
 
-public:	
-	
-	
 };

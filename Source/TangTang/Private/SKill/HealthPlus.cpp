@@ -8,13 +8,12 @@ void AHealthPlus::SkillExecute(ATangTangCharacter* Character)
 {
 	if (Character)
 	{
-		Character->SetMaxHealth(
-			Character->GetMaxHelath() +
-			(Character->GetMaxHelath() * 0.1)
-		);
-		Character->HUDHealth(
-			Character->GetHealth() /
-			Character->GetMaxHelath()
-		);
+		// 현재 최대 체력의 10%를 추가
+		const float MaxHealthIncrease = Character->GetMaxHealth() * 0.1f;
+		Character->SetMaxHealth(Character->GetMaxHealth() + MaxHealthIncrease);
+
+		// 체력을 업데이트
+		const float HealthPercentage = Character->GetHealth() / Character->GetMaxHealth();
+		Character->HUDHealth(HealthPercentage);
 	}
 }

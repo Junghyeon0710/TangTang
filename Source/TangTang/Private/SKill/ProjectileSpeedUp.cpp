@@ -7,11 +7,13 @@
 
 void AProjectileSpeedUp::SkillExecute(ATangTangCharacter* Character)
 {
-	if (Character && Character->GetCharacterWeapon())
-	{
-		Character->GetCharacterWeapon()->SetProJectileSpeed(
-			Character->GetCharacterWeapon()->GetProjectileSpawnTime()
-			* 2
-		);
-	}
+    if (Character && Character->GetCharacterWeapon())
+    {
+        AWeapon* CharacterWeapon = Character->GetCharacterWeapon();
+        if (CharacterWeapon)
+        {
+            float NewProjectileSpeed = CharacterWeapon->GetProjectileSpawnTime() * 2;
+            CharacterWeapon->SetProJectileSpeed(NewProjectileSpeed);
+        }
+    }
 }

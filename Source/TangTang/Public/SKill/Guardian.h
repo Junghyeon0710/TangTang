@@ -22,42 +22,41 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void SphereBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-	virtual void SphereOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void SphereOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
-	
 private:
+	// Guardian 스킬 데미지 함수
+	void GuardianDamage();
+
+	// 캐릭터 주위를 도는 함수
+	void UpdateGuardianLocation();
+
+	// 캐릭터 관련 변수
 	UPROPERTY()
 	class ATangTangCharacter* TangTangCharacter;
 
+	// Guardian 루트 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* GuardianRoot;
 
-	//캐릭터 상대적인 X거리
+	// Guardian 스킬의 반지름 (X, Y)
 	UPROPERTY(EditAnywhere)
-	float RadiusX =100.f;
-
-	//캐릭터 상대적인 Y거리
+	float GuardianRadiusX = 100.f;
 	UPROPERTY(EditAnywhere)
-	float RadiusY =100.f;
-	
-	//시작값
+	float GuardianRadiusY = 100.f;
+
+	// Guardian 스킬 시간 및 속도
 	UPROPERTY(EditAnywhere)
-	float Time = 0.f;
-
-	//공도는 스피드
+	float GuardianTime = 0.f;
 	UPROPERTY(EditAnywhere)
-	float Speed = 150;
+	float GuardianSpeed = 150;
 
-	void AroundCharacter();
-
+	// 주변의 적에게 주기적으로 데미지를 입히는 타이머 관련 변수
 	FTimerHandle GuardianDamageTimer;
 
-	//겹쳐있을때 1초에 몇번 뎀지 줄건지
+	// 겹쳐있을 때 1초에 몇 번 데미지를 주는지에 대한 딜레이 시간
 	UPROPERTY(EditAnywhere)
-	float GuardianDamageTiemDelay;
-
-	void GuardianDamage();
+	float GuardianDamageTimeDelay = 1.0f;
 
 	class IHitInterface* HitInterface;
-
 };

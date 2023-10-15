@@ -7,22 +7,20 @@
 #include <Kismet/KismetMathLibrary.h>
 #include <Item/HealthBox.h>
 
-// Sets default values
 ASpawnPoint::ASpawnPoint()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	
 	SpawnPoint = CreateDefaultSubobject<UBoxComponent>(TEXT("Spawn Point"));
 	SetRootComponent(SpawnPoint);
 }
 
-// Called when the game starts or when spawned
 void ASpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnPoint::SpawnEnemy, 1/SpawnTimeDelay, true);
-	GetWorldTimerManager().SetTimer(HealthBoxSpawnTimer, this, &ASpawnPoint::SpawnHealthBox, HealthBoxSpawnTimeDelay, true,1.f);
+	GetWorldTimerManager().SetTimer(HealthBoxSpawnTimer, this, &ASpawnPoint::SpawnHealthBox, 30, true);
 }
 
 void ASpawnPoint::SpawnEnemy()
@@ -36,24 +34,17 @@ void ASpawnPoint::SpawnEnemy()
 
 void ASpawnPoint::SpawnHealthBox()
 {
-	if (HealthBoxClass)
+	if (HealthBoxClass == nullptr)
 	{
-		FVector BoxRandomPoint = UKismetMathLibrary::RandomPointInBoundingBox(SpawnPoint->GetComponentLocation(), SpawnPoint->GetScaledBoxExtent());
-		AHealthBox* HealthBox = GetWorld()->SpawnActor<AHealthBox>(HealthBoxClass, FTransform(BoxRandomPoint));
-		FVector HelathBoxLocation = BoxRandomPoint;
-		HelathBoxLocation.Z = 20;
-		if (HealthBox)
-		{
-			HealthBox->SetActorLocation(HelathBoxLocation);
-		}
+		return;
 	}
+
+	// 스폰 위치 랜덤 선택
+	FVector SpawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(SpawnPoint->GetComponentLocation(), SpawnPoint->GetScaledBoxExtent());
+
+	// 높이 조정
+	SpawnLocation.Z = 20;
+
+	// 체력 상자 스폰
+	GetWorld()->SpawnActor<AHealthBox>(HealthBoxClass, FTransform(SpawnLocation));
 }
-
-// Called every frame
-void ASpawnPoint::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-
-}
-

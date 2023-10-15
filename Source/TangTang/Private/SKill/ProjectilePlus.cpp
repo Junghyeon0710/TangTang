@@ -9,9 +9,10 @@ void AProjectilePlus::SkillExecute(ATangTangCharacter* Character)
 {
 	if (Character)
 	{
-		Character->GetCharacterWeapon()->SetArrowIndex(
-			Character->GetCharacterWeapon()->GetArrowIndex() + 1
-		);
+		AWeapon* CharacterWeapon = Character->GetCharacterWeapon();
+		if (CharacterWeapon)
+		{
+			CharacterWeapon->IncreaseArrowIndex();
+		}
 	}
-
 }

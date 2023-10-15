@@ -6,10 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include <HitInterface.h>
 
-// Sets default values
 ASpawnFire::ASpawnFire()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	SphereOverlap = CreateDefaultSubobject<USphereComponent>(TEXT("ShpereOverlap"));
@@ -19,7 +17,6 @@ ASpawnFire::ASpawnFire()
 	FireParticleComponent->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void ASpawnFire::BeginPlay()
 {
 	Super::BeginPlay();
@@ -37,12 +34,5 @@ void ASpawnFire::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 			HitInterface->GetHit(FireDamage);
 		}
 	}
-}
-
-// Called every frame
-void ASpawnFire::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 

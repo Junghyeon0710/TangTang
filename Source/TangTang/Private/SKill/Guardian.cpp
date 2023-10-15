@@ -18,7 +18,6 @@ AGuardian::AGuardian()
 
 	SphereOverlap->SetupAttachment(RootComponent);
 	SkillMesh->SetupAttachment(SphereOverlap);
-
 }
 
 void AGuardian::BeginPlay()
@@ -26,34 +25,15 @@ void AGuardian::BeginPlay()
 	Super::BeginPlay();
 
 	 TangTangCharacter = Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
-
 }
 
 void AGuardian::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*if (OtherActor)
-	{
-		HitInterface = Cast<IHitInterface>(OtherActor);
-		if (HitInterface)
-		{
-			HitInterface->GetHit(SkillDamage);
-			GetWorldTimerManager().SetTimer(
-				GuardianDamageTimer,
-				this,
-				&AGuardian::GuardianDamage,
-				1 / GuardianDamageTiemDelay,
-				true);
-		}
-	}*/
 	Super::SphereBeginOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 void AGuardian::SphereOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	/*if (GetWorldTimerManager().IsTimerActive(GuardianDamageTimer))
-	{
-		GetWorldTimerManager().ClearTimer(GuardianDamageTimer);
-	}*/
 	if (HitInterface)
 	{
 		HitInterface = nullptr;
@@ -73,28 +53,33 @@ void AGuardian::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AroundCharacter();
-	
+	UpdateGuardianLocation();
 }
 
-void AGuardian::AroundCharacter()
+void AGuardian::UpdateGuardianLocation()
 {
+	// 플레이어 캐릭터 레퍼런스 획득
 	TangTangCharacter = TangTangCharacter == nullptr ? Cast<ATangTangCharacter>(UGameplayStatics::GetPlayerPawn(this, 0)) : TangTangCharacter;
 
 	if (TangTangCharacter)
 	{
+		// 가디언의 위치 설정
 		SetActorLocation(TangTangCharacter->GetActorLocation());
-		SphereOverlap->SetRelativeLocation(
-			FVector(UKismetMathLibrary::DegCos(Time) * RadiusX,
-				UKismetMathLibrary::DegSin(Time) * RadiusY,
-				0.f));
-		if (GetWorld()->DeltaTimeSeconds * Speed + Time > 360.f)
+
+		// 가디언의 스피어 컴포넌트 위치 설정
+		SphereOverlap->SetRelativeLocation(FVector(
+			UKismetMathLibrary::DegCos(GuardianTime) * GuardianRadiusX,
+			UKismetMathLibrary::DegSin(GuardianTime) * GuardianRadiusY,
+			0.f));
+
+		// 가디언 시간 업데이트
+		if (GetWorld()->DeltaTimeSeconds * GuardianSpeed + GuardianTime > 360.f)
 		{
-			Time = 0;
+			GuardianTime = 0;
 		}
 		else
 		{
-			Time = GetWorld()->DeltaTimeSeconds * Speed + Time;
+			GuardianTime = GetWorld()->DeltaTimeSeconds * GuardianSpeed + GuardianTime;
 		}
 	}
 }
@@ -103,6 +88,7 @@ void AGuardian::GuardianDamage()
 {
 	if (HitInterface)
 	{
+		// 겹쳐있는 적에게 데미지 적용
 		HitInterface->GetHit(SkillDamage);
 	}
 }

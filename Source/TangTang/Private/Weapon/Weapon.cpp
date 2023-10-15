@@ -6,46 +6,38 @@
 #include <Kismet/GameplayStatics.h>
 #include <Weapon/Projectile/Projectile.h>
 #include <Components/ArrowComponent.h>
-// Sets default values
+
 AWeapon::AWeapon()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetRootComponent(WeaponMesh);
 
-	ArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent1"));
-	ArrowComponent1->SetupAttachment(RootComponent);
+	ArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent1")));
+	ArrowComponent[0]->SetupAttachment(RootComponent);
 
-	ArrowComponent2 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent2"));
-	ArrowComponent2->SetupAttachment(RootComponent);
+	ArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent2")));
+	ArrowComponent[1]->SetupAttachment(RootComponent);
 
-	ArrowComponent3 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent3"));
-	ArrowComponent3->SetupAttachment(RootComponent);
+	ArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent3")));
+	ArrowComponent[2]->SetupAttachment(RootComponent);
 
-	ArrowComponent4 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent4"));
-	ArrowComponent4->SetupAttachment(RootComponent);
+	ArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent4")));
+	ArrowComponent[3]->SetupAttachment(RootComponent);
 
-	ArrowComponent5 = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent5"));
-	ArrowComponent5->SetupAttachment(RootComponent);
-	
-	ArrowComponent.Add(ArrowComponent1);
-	ArrowComponent.Add(ArrowComponent2);
-	ArrowComponent.Add(ArrowComponent3);
-	ArrowComponent.Add(ArrowComponent4);
-	ArrowComponent.Add(ArrowComponent5);
+	ArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent5")));
+	ArrowComponent[4]->SetupAttachment(RootComponent);
+
 }
 
-
-// Called when the game starts or when spawned
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	AttachWeapon();
-	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AWeapon::SpawnProjectile, 1 / SpawnTIme, true);
 
+	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AWeapon::SpawnProjectile, 1 / SpawnTime, true);
 }
 
 void AWeapon::AttachWeapon()
@@ -60,14 +52,6 @@ void AWeapon::AttachWeapon()
 		SetInstigator(Character);
 		Character->SetCharacterWeapon(this);
 	}
-
-}
-
-// Called every frame
-void AWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void AWeapon::SetProJectileSpeed(const int TimeDelay)
@@ -76,18 +60,22 @@ void AWeapon::SetProJectileSpeed(const int TimeDelay)
 	{
 		GetWorldTimerManager().ClearTimer(SpawnTimer);
 	}
-	SpawnTIme = TimeDelay;
-	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AWeapon::SpawnProjectile, 1 / SpawnTIme, true);
+	SpawnTime = TimeDelay;
+	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AWeapon::SpawnProjectile, 1 / SpawnTime, true);
 }
 
 void AWeapon::SpawnProjectile()
 {
-	if (ProJectileClass == nullptr) return;
+	if (ProjectileClass == nullptr) return;
 
-	if (ArrowIndex == 5) ArrowIndex = 4;
+	// 화살 인덱스가 5를 넘지 않도록 보정
+	if (ArrowIndex > 4) ArrowIndex = 4;
+
 	for(int32 Arrowi = 0; Arrowi <= ArrowIndex; Arrowi++)
 	{	
-		Projectile = GetWorld()->SpawnActor<AProjectile>(ProJectileClass, ArrowComponent[Arrowi]->GetComponentTransform());
+		FTransform SpawnTransform = ArrowComponent[Arrowi]->GetComponentTransform();
+		Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SpawnTransform);
+		
 		if (FireSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(
@@ -95,11 +83,11 @@ void AWeapon::SpawnProjectile()
 				FireSound,
 				Projectile->GetActorLocation());
 		}
+
 		if (Projectile)
 		{
 			Projectile->SetLifeSpan(5.f);
 		}
 	}
-
 }
 

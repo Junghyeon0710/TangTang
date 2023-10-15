@@ -17,16 +17,19 @@ class TANGTANG_API ATangTangPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	void CreateSkillWidget();
-	void SetSkill(class UTexture2D* Image,const FString& Name ,const FString& Text,const FString& Level );
-	void SetSkill2(class UTexture2D* Image, const FString& Name, const FString& Text, const FString& Level);
-	void SetSkill3(class UTexture2D* Image, const FString& Name, const FString& Text, const FString& Level);
+	void SetSkill(class UTexture2D* Image,const FString& Name ,const FString& Text,const FString& Level,const int32& SkillSlot );
+	
+	void WhatSkillButtonClick(const int32& SkillSlot);
+
 	UFUNCTION()
-	void Skill1ButtonClick();
+	void OnSkill1ButtonClick();
+
 	UFUNCTION()
-	void Skill2ButtonClick();
+	void OnSkill2ButtonClick();
+	
 	UFUNCTION()
-	void Skill3ButtonClick();
-	//void SkillInit();
+	void OnSkill3ButtonClick();
+
 protected:
 	virtual void BeginPlay() override;
 

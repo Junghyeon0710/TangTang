@@ -2,17 +2,14 @@
 
 
 #include "Enemy.h"
-#include "EnemyController/EnemyController.h"
 #include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include <Components/BoxComponent.h>
 #include <TangTang/TangTangCharacter.h>
 #include <Item/SpawnExp.h>
 
-// Sets default values
 AEnemy::AEnemy()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	OverlapBox = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapBox"));
@@ -22,10 +19,8 @@ AEnemy::AEnemy()
 void AEnemy::GetHit(const float& Damage)
 {
 	EnemyDie();
-	
 }
 
-// Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -42,9 +37,9 @@ void AEnemy::BoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		if (Character)
 		{	
 			Character->SetEnemyOverlap(true);
-			Character->SetOverlapNum(Character->GetOverlapNum() + 1);
+			Character->IncreaseOverlapNum();
 			Attack();
-			GetWorldTimerManager().SetTimer(EndTimer, this, &AEnemy::Attack, 1/ DamageTime, true); //1초마다 어택함수 호출
+			GetWorldTimerManager().SetTimer(AttackTimer, this, &AEnemy::Attack, 1/ TimeBasedDamage, true); //1초마다 어택함수 호출
 		}
 	}
 }
@@ -58,10 +53,10 @@ void AEnemy::BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		if (Character && Character->GetEnemyOverlap())
 		{
 			Character->SetEnemyOverlap(false);
-			Character->SetOverlapNum(Character->GetOverlapNum() -1);
-			if (Character->GetOverlapNum() < 0)
+			Character->DecreaseOverlapNum();
+			if (Character->GetOverlapNum() <= 0)
 			{
-				GetWorldTimerManager().ClearTimer(EndTimer);
+				GetWorldTimerManager().ClearTimer(AttackTimer);
 			}
 		}
 		if (Character->GetOverlapNum() > 0)
@@ -82,20 +77,6 @@ void AEnemy::EnemyDie()
 		}
 		Destroy();
 	}
-}
-
-// Called every frame
-void AEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AEnemy::Attack()

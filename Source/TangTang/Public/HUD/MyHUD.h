@@ -21,7 +21,7 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UCharacterOverlay> CharacterOverlayclass;
+	TSubclassOf<class UCharacterOverlay> CharacterOverlayClass;
 
 public:
 	FORCEINLINE UCharacterOverlay* GetCharacterOverlay() const { return CharacterOverlay; }

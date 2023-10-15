@@ -15,6 +15,7 @@ AMolotovcocktail::AMolotovcocktail()
 	ProjectileMovementComponent->InitialSpeed = 400.f;
 	ProjectileMovementComponent->MaxSpeed = 400.f;
 
+	// 충돌 설정 변경
 	SphereOverlap->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SphereOverlap->bHasPerInstanceHitProxies = true;
 	SphereOverlap->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -28,10 +29,11 @@ void AMolotovcocktail::SkillExecute(ATangTangCharacter* Character)
 {
 	if (Character == nullptr) return;
 
-	Character->SetMolotovconcktailIndex(Character->GetMolotovconcktailIndex() + 1);
+	Character->IncreaseMolotovcocktailIndex();
+	
 	Character->SpawnMolotovcoktail();
 	Character->SpawnMolotovcoktailTimer();
-}
+} 
 
 void AMolotovcocktail::BeginPlay()
 {
@@ -43,10 +45,14 @@ void AMolotovcocktail::BeginPlay()
 void AMolotovcocktail::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Destroy();
+
+	// 피격 사운드 재생
 	if (HitSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 	}
+
+	// 화염 생성
 	if (SpawnFireClass)
 	{
 		ASpawnFire* SpawnFire = GetWorld()->SpawnActor<ASpawnFire>(SpawnFireClass, GetActorTransform());
@@ -54,6 +60,7 @@ void AMolotovcocktail::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		{
 			SpawnFire->SetLifeSpan(3.f);
 		}
+		// 화염 사운드 재생
 		if (SpawnFireSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, SpawnFireSound, SpawnFire->GetActorLocation());

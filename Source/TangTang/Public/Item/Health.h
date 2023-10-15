@@ -23,6 +23,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UParticleSystemComponent* HealthParticle;
 
-	UPROPERTY(EditAnywhere)
-	float Health = 10;
+	// 체력 증가량을 나타내는 변수
+	UPROPERTY(EditAnywhere, Category = "Attributes")
+	float HealthIncrease;
 };

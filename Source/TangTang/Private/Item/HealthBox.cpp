@@ -5,11 +5,13 @@
 #include <Item/Health.h>
 #include <Weapon/Projectile/Projectile.h>
 #include <Kismet/GameplayStatics.h>
+
 void AHealthBox::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
 	if (OtherActor && OtherActor->IsA(AProjectile::StaticClass()))
 	{
+		Destroy();
+
 		if (OverlapSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, OverlapSound, GetActorLocation());
@@ -22,7 +24,5 @@ void AHealthBox::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 		{
 			GetWorld()->SpawnActor<AHealth>(HealthClass, GetActorTransform());
 		}
-		Destroy();
 	}
-
 }

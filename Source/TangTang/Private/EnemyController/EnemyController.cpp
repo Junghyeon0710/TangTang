@@ -4,15 +4,16 @@
 #include "EnemyController/EnemyController.h"
 #include "Kismet/GameplayStatics.h"
 
-
-void AEnemyController::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void AEnemyController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	MoveToActor(GetWorld()->GetFirstPlayerController(), Radius,false);
+	
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+
+    if (PlayerPawn)
+    {
+        MoveToActor(PlayerPawn, CharacterRadius, false);
+        SetFocus(PlayerPawn);
+    }
 }
 

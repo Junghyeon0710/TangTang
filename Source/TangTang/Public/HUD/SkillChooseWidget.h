@@ -16,6 +16,7 @@ class TANGTANG_API USkillChooseWidget : public UUserWidget
 	
 public:
 
+	/** 스킬 1 UI*/
 	UPROPERTY(meta = (BindWidget))
 	class UImage* Skill1Image;
 
@@ -31,6 +32,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Skill1Button;
 
+	/** 스킬 2 UI*/
 	UPROPERTY(meta = (BindWidget))
 	class UImage* Skill2Image;
 
@@ -46,6 +48,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Skill2Button;
 
+	/** 스킬3 UI*/
 	UPROPERTY(meta = (BindWidget))
 	class UImage* Skill3Image;
 
@@ -61,5 +64,4 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Skill3Button;
 
-	/** 블루프린트에서 위젯을 하나 만들어 배열로 했으면 어땠을까 함*/
 };

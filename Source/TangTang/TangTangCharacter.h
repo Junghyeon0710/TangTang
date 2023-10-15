@@ -61,9 +61,10 @@ public:
 	void SpawnLightning();
 	void SpawnLightningTimer();
 	void SpawnTornado();
-	void SpawnTorandoTimer();
+	void SpawnTornadoTimer();
 	void SpawnMolotovcoktail();
 	void SpawnMolotovcoktailTimer();
+	
 protected:
 
 	/** Called for movement input */
@@ -224,7 +225,6 @@ public:
 	FORCEINLINE bool GetEnemyOverlap() const { return EnemyOverlap; }
 	FORCEINLINE void SetEnemyOverlap(bool Overlap) { EnemyOverlap = Overlap; }
 	FORCEINLINE int32 GetOverlapNum() const { return OverlapNum; }
-	FORCEINLINE void SetOverlapNum(int32 Num)  {  OverlapNum = Num; }
 	FORCEINLINE float GetPlayerMaxExp() const { return PlayerMaxExp; }
 	FORCEINLINE float GetPlayerExp() const { return PlayerExp; }
 	FORCEINLINE void SetPlayerExp(float Exp) { PlayerExp = Exp; }
@@ -234,13 +234,14 @@ public:
 	FORCEINLINE void SetCharacterWeapon(class AWeapon* Weapon) { CharacterWeapon = Weapon; }
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE void SetHealth(float GetHealth) { Health = GetHealth; }
-	FORCEINLINE float GetMaxHelath() const { return MaxHealth; }
+	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	FORCEINLINE void SetMaxHealth(float GetMaxHealth) { MaxHealth = GetMaxHealth; }
-	FORCEINLINE int32 GetLightningLevel() const { return LightningLevel; }
-	FORCEINLINE void SetLightningLevel(int32 Level) { LightningLevel = Level; }
-	FORCEINLINE int32 GetTornadoIndex() const { return TornadoIndex; }
-	FORCEINLINE void SetTornadoIndex(int32 Index) { TornadoIndex = Index; }
-	FORCEINLINE int32 GetMolotovconcktailIndex() const { return MolotovcocktaillIndex; }
-	FORCEINLINE void SetMolotovconcktailIndex(int32 Index) { MolotovcocktaillIndex = Index; }
+	
+	FORCEINLINE void IncreaseLightningLevel() { LightningLevel++; };
+	FORCEINLINE void IncreaseMolotovcocktailIndex() { MolotovcocktaillIndex++; }
+	FORCEINLINE void IncreaseTornadoIndex() { TornadoIndex++; }
+	FORCEINLINE void IncreaseOverlapNum() { OverlapNum++; }
+	FORCEINLINE void DecreaseOverlapNum() { OverlapNum--; }
+	
 };
 

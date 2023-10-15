@@ -13,17 +13,23 @@ ATornado::ATornado()
 	ProjectileMovementComponent->MaxSpeed = 400.f;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.f;
 
-	TornadoParticle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TornadoParticle"));
-	TornadoParticle->SetupAttachment(RootComponent);
+	TornadoNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TornadoNiagara"));
+	TornadoNiagara->SetupAttachment(RootComponent);
 }
 
 void ATornado::SkillExecute(ATangTangCharacter* Character)
 {
-	if (Character == nullptr) return;
-	Character->SetTornadoIndex(Character->GetTornadoIndex() + 1);
-	Character->SpawnTornado();
-	Character->SpawnTorandoTimer();
-	
+	if (Character)
+	{
+		// 토네이도 인덱스 증가
+		Character->IncreaseTornadoIndex();
+
+		// 토네이도 스폰
+		Character->SpawnTornado();
+
+		// 토네이도 타이머 실행
+		Character->SpawnTornadoTimer();
+	}
 }
 
 void ATornado::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

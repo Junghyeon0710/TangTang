@@ -4,10 +4,9 @@
 #include "Item/SpawnExp.h"
 #include <Components/SphereComponent.h>
 #include <TangTang/TangTangCharacter.h>
-// Sets default values
+
 ASpawnExp::ASpawnExp()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	SphereOverlap = CreateDefaultSubobject<USphereComponent>(TEXT("SphereOverlap"));
@@ -17,7 +16,6 @@ ASpawnExp::ASpawnExp()
 	EXPMesh->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void ASpawnExp::BeginPlay()
 {
 	Super::BeginPlay();
@@ -35,10 +33,4 @@ void ASpawnExp::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 			Destroy();
 		}
 	}
-}
-
-// Called every frame
-void ASpawnExp::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }

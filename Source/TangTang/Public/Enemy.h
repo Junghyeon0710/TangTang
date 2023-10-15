@@ -14,11 +14,10 @@ class TANGTANG_API AEnemy : public ACharacter , public IHitInterface
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AEnemy();
 	virtual void GetHit(const float& Damage)override;
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -30,20 +29,8 @@ protected:
 
 	//적 죽을시
 	void EnemyDie();
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 private:
-
-	UPROPERTY(VisibleAnywhere)
-	class AAIController* EnemyController;
-
-	//* 반경 몇에서 멈추나*
-	UPROPERTY(EditAnywhere)
-	float AcceptanceRadius = 5.f;
 
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* OverlapBox;
@@ -51,20 +38,19 @@ private:
 	UPROPERTY(EditAnywhere)
 	float EnemyDamage = 5.f;
 
-	//TArray<int32> DamageTimer;
-
-	FTimerHandle EndTimer;
-
-	void Attack();
+	/** 데미지 어택 타이머*/
+	FTimerHandle AttackTimer;
 
 	bool OverlapCharacter = false;
 
 	UPROPERTY(EditAnywhere)
-	float DamageTime = 1.f;
+	float TimeBasedDamage = 1.f;
 
+	void Attack(); 
+	/*****************/
+	
 	UPROPERTY()
 	class ATangTangCharacter* Character;
-
 
 	/** 적 체력 */
 	UPROPERTY(EditAnywhere)

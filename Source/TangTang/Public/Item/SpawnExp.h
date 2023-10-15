@@ -13,7 +13,6 @@ class TANGTANG_API ASpawnExp : public AActor
 	
 public:	
 	ASpawnExp();
-	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
 

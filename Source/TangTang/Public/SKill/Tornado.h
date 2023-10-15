@@ -16,16 +16,15 @@ class TANGTANG_API ATornado : public ASkill
 public:
 	ATornado();
 	virtual void SkillExecute(class ATangTangCharacter* Character) override;
+
 protected:
 	virtual void SphereBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-private:
 
+private:
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	class UNiagaraComponent* TornadoParticle;
-
-
+	class UNiagaraComponent* TornadoNiagara;
 
 };

@@ -240,32 +240,18 @@ void ATangTangCharacter::Skill1Info()
 		SkillNumber.AddUnique(SkillIndex);
 		if (SkillNumber.Num() == 3) break;
 	}
-	if (CharacterSkill[SkillNumber[0]].GetDefaultObject())
+	for (int i = 0; i < 3; i++)
 	{
-		TangTangPlayerController->SetSkill(
-			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillImage(),
-			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillName(),
-			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillText(),
-			CharacterSkill[SkillNumber[0]].GetDefaultObject()->GetSkillLevel());
+		if (CharacterSkill[SkillNumber[i]].GetDefaultObject())
+		{
+			TangTangPlayerController->SetSkill(
+				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillImage(),
+				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillName(),
+				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillText(),
+				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillLevel(),
+				i);
+		}
 	}
-	if (CharacterSkill[SkillNumber[1]].GetDefaultObject())
-	{
-		TangTangPlayerController->SetSkill2(
-			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillImage(),
-			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillName(),
-			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillText(),
-			CharacterSkill[SkillNumber[1]].GetDefaultObject()->GetSkillLevel());
-	}
-	if (CharacterSkill[SkillNumber[2]].GetDefaultObject())
-	{
-		TangTangPlayerController->SetSkill3(
-			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillImage(),
-			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillName(),
-			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillText(),
-			CharacterSkill[SkillNumber[2]].GetDefaultObject()->GetSkillLevel());
-	}
-	UE_LOG(LogTemp, Error, TEXT("index1 : %d index2 : %d , index3 : %d"),
-		SkillNumber[0], SkillNumber[1], SkillNumber[2]);
 }
 
 void ATangTangCharacter::SpawnTornado()
@@ -287,7 +273,7 @@ void ATangTangCharacter::SpawnTornado()
 	}
 }
 
-void ATangTangCharacter::SpawnTorandoTimer()
+void ATangTangCharacter::SpawnTornadoTimer()
 {
 	GetWorldTimerManager().SetTimer(TornadoTimer, this, &ATangTangCharacter::SpawnTornado, 1 / TornadoDelay, true, 4.f);
 }
@@ -312,7 +298,6 @@ void ATangTangCharacter::SpawnMolotovcoktailTimer()
 	GetWorldTimerManager().SetTimer(MolotovcocktailTimer, this, &ATangTangCharacter::SpawnMolotovcoktail, 1 / MolotovcocktailDelay, true, 4.f);
 
 }
-
 
 ///////////////////////////////F///////////////////////////////////////////
 // Input
@@ -348,8 +333,6 @@ void ATangTangCharacter::SpawnLightning()
 				UGameplayStatics::PlaySound2D(this, LightningSound);
 			}
 		}
-
-
 	}
 }
 
