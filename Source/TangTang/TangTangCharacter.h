@@ -41,9 +41,9 @@ public:
 	ATangTangCharacter();
 	virtual void Tick(float DeltaTime) override;
 
+	/** 전투 */
 	virtual void GetDamage(float Damage);
 	virtual void GetExp(float Exp);
-	void GuardianSpawn();
 	void HUDHealth(float GetHealth);
 
 	/** 스킬 스폰*/
@@ -53,6 +53,7 @@ public:
 	void SpawnTornadoTimer();
 	void SpawnMolotovcoktail();
 	void SpawnMolotovcoktailTimer();
+	void GuardianSpawn();
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class ASkill>> CharacterSkill;
@@ -71,7 +72,10 @@ protected:
 	virtual void BeginPlay();
 
 private:
+	/** 입력 */
 	void SetupInputMappingContext();
+
+	/** 전투 */
 	void InitializeHUD();
 	void WorldTime();
 	void Die();
@@ -79,6 +83,12 @@ private:
 	void Skill1Info();
 	void LevelUp();
 	void UpdateHUDExpBar();
+
+	UPROPERTY()
+	class ATangTangPlayerController* TangTangPlayerController;
+
+	UPROPERTY()
+    class AWeapon* CharacterWeapon;
 
 	/** 플에이어 체력*/
 	UPROPERTY(EditAnywhere)
@@ -107,24 +117,21 @@ private:
 	UPROPERTY()
 	class UCharacterOverlay* CharacterOverlay;
 
+	/** 적이 몇명 */
 	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess = "true"))
-	bool EnemyOverlap = false;
+	bool bEnemyOverlap = false;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "ture"))
 	int32 OverlapNum;
 
-	UPROPERTY()
-	class ATangTangPlayerController* TangTangPlayerController;
-
+	/** 스킬 */
 	class UTexture2D* CharacterSkillImage;
 	FString CharacterSkillName;
 	FString CharacterSkillText;
 
+	/** 수호자 스킬 */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AGuardian> GuardianClass;
-
-	UPROPERTY()
-	class AWeapon* CharacterWeapon;
 
 	/** 번개 스킬*/
 	UPROPERTY(VisibleAnywhere)
@@ -143,7 +150,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* LightningSound;
-	/** /번개 스킬*/
+	/*/번개 스킬*/
 
 
 	/** 토네이토 스킬*/
@@ -190,8 +197,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	FORCEINLINE bool GetIsEnemyOverlapping() const { return EnemyOverlap; }
-	FORCEINLINE void SetEnemyOverlap(bool Overlap) { EnemyOverlap = Overlap; }
+	FORCEINLINE bool IsEnemyOverlapping() const { return bEnemyOverlap; }
+	FORCEINLINE void SetIsEnemyOverlap(bool Overlap) { bEnemyOverlap = Overlap; }
+
 	FORCEINLINE int32 GetOverlapNum() const { return OverlapNum; }
 	FORCEINLINE float GetPlayerMaxExp() const { return PlayerMaxExp; }
 	FORCEINLINE float GetPlayerExp() const { return PlayerExp; }
