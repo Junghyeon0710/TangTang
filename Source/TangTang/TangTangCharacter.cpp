@@ -4,24 +4,23 @@
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include <Components/BoxComponent.h>
+#include <Components/ArrowComponent.h>
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/Controller.h"
+#include <playerController/TangTangPlayerController.h>
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include <HUD/MyHUD.h>
-#include <playerController/TangTangPlayerController.h>
 #include <HUD/CharacterOverlay.h>
 #include <SKill/Skill.h>
 #include <SKill/Guardian.h>
-#include <Components/BoxComponent.h>
-#include <Kismet/KismetMathLibrary.h>
-#include <SKill/Lightning.h>
-#include <Kismet/GameplayStatics.h>
-#include <Components/ArrowComponent.h>
 #include <SKill/Tornado.h>
 #include <Skill/Molotovcocktail.h>
+#include <SKill/Lightning.h>
+#include <Kismet/GameplayStatics.h>
+#include <Kismet/KismetMathLibrary.h>
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -32,20 +31,17 @@ ATangTangCharacter::ATangTangCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set size for collision capsule
+	// 콜리전 캡슐의 크기 설정
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
-	// Don't rotate when the controller rotates. Let that just affect the camera.
+	// 컨트롤러가 회전할 때 캐릭터를 회전시키지 않도록 설정. 이는 카메라에만 영향을 미침
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
-
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
+	// 캐릭터 이동 설정
+	GetCharacterMovement()->bOrientRotationToMovement = true; 	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
@@ -53,70 +49,53 @@ ATangTangCharacter::ATangTangCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
+	// 카메라 생성 (충돌 시 플레이어에게 끌어당김)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->bUsePawnControlRotation = true; 
 	CameraBoom->TargetArmLength = 0.f;
 	CameraBoom->TargetOffset = FVector(0.f, 0.f, 700.f);
 
-	// Create a follow camera
+	// 팔로우 카메라 생성
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
+	FollowCamera->bUsePawnControlRotation = false; 
 	FollowCamera->SetWorldRotation(FRotator(0.f,-90.f,0.f));
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-
 
 	LightningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LightningBox"));
 	LightningBox->SetupAttachment(RootComponent);
 
 	/** 토네이도 */
-	TornadoArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent1"));
-	TornadoArrowComponent1->SetupAttachment(RootComponent);
+	TornadoArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent1")));
+	TornadoArrowComponent[0]->SetupAttachment(RootComponent);
 
-	TornadoArrowComponent2 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent2"));
-	TornadoArrowComponent2->SetupAttachment(RootComponent);
+	TornadoArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent2")));
+	TornadoArrowComponent[1]->SetupAttachment(RootComponent);
 
-	TornadoArrowComponent3 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent3"));
-	TornadoArrowComponent3->SetupAttachment(RootComponent);
+	TornadoArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent3")));
+	TornadoArrowComponent[2]->SetupAttachment(RootComponent);
 
-	TornadoArrowComponent4 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent4"));
-	TornadoArrowComponent4->SetupAttachment(RootComponent);
-
-	TornadoArrowComponent5 = CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent5"));
-	TornadoArrowComponent5->SetupAttachment(RootComponent);
-
-	TornadoArrowComponent.Add(TornadoArrowComponent1);
-	TornadoArrowComponent.Add(TornadoArrowComponent2);
-	TornadoArrowComponent.Add(TornadoArrowComponent3);
-	TornadoArrowComponent.Add(TornadoArrowComponent4);
-	TornadoArrowComponent.Add(TornadoArrowComponent5);
+	TornadoArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent4")));
+	TornadoArrowComponent[3]->SetupAttachment(RootComponent);
+	
+	TornadoArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("TornadoArrowComponent5")));
+	TornadoArrowComponent[4]->SetupAttachment(RootComponent);
 
 	/** 화염병 */
-	MolotovococktailArrowComponent1 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent1"));
-	MolotovococktailArrowComponent1->SetupAttachment(RootComponent);
+	MolotovococktailArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent1")));
+	MolotovococktailArrowComponent[0]->SetupAttachment(RootComponent);
 
-	MolotovococktailArrowComponent2 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent2"));
-	MolotovococktailArrowComponent2->SetupAttachment(RootComponent);
+	MolotovococktailArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent2")));
+	MolotovococktailArrowComponent[1]->SetupAttachment(RootComponent);
 
-	MolotovococktailArrowComponent3 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent3"));
-	MolotovococktailArrowComponent3->SetupAttachment(RootComponent);
+	MolotovococktailArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent3")));
+	MolotovococktailArrowComponent[2]->SetupAttachment(RootComponent);
 
-	MolotovococktailArrowComponent4 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent4"));
-	MolotovococktailArrowComponent4->SetupAttachment(RootComponent);
+	MolotovococktailArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent4")));
+	MolotovococktailArrowComponent[3]->SetupAttachment(RootComponent);
 
-	MolotovococktailArrowComponent5 = CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent5"));
-	MolotovococktailArrowComponent5->SetupAttachment(RootComponent);
-
-	TornadoArrowComponent.Add(MolotovococktailArrowComponent1);
-	TornadoArrowComponent.Add(MolotovococktailArrowComponent2);
-	TornadoArrowComponent.Add(MolotovococktailArrowComponent3);
-	TornadoArrowComponent.Add(MolotovococktailArrowComponent4);
-	TornadoArrowComponent.Add(MolotovococktailArrowComponent5);
-
+	MolotovococktailArrowComponent.Add(CreateDefaultSubobject<UArrowComponent>(TEXT("MolotovococktailArrowComponent5")));
+	MolotovococktailArrowComponent[4]->SetupAttachment(RootComponent);
 
 }
 
@@ -129,7 +108,7 @@ void ATangTangCharacter::Tick(float DeltaTime)
 
 void ATangTangCharacter::GetDamage(float Damage)
 {
-	Health -= Damage;
+	Health = FMath::Clamp(Health - Damage,0,MaxHealth);
 	if (Health <= 0)
 	{
 		Die();
@@ -141,21 +120,15 @@ void ATangTangCharacter::GetDamage(float Damage)
 void ATangTangCharacter::GetExp(float Exp)
 {
 	PlayerExp += Exp;
+
 	if (PlayerExp >= PlayerMaxExp)
 	{
-		PlayerLevel++;
-		PlayerExp = 0;
-		PlayerMaxExp *= PlayerLevel;
-		HUDExp(0.f);
-		if (TangTangPlayerController)
-		{
-			TangTangPlayerController->CreateSkillWidget();	
-			Skill1Info();
-		}
-		return;
+		LevelUp();
 	}
-	
-	HUDExp(PlayerExp / PlayerMaxExp);
+	else
+	{
+		UpdateHUDExpBar();
+	}
 }
 
 void ATangTangCharacter::GuardianSpawn()
@@ -169,10 +142,14 @@ void ATangTangCharacter::GuardianSpawn()
 
 void ATangTangCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
+	SetupInputMappingContext();
+	InitializeHUD();
+}
+
+void ATangTangCharacter::SetupInputMappingContext()
+{
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -180,7 +157,11 @@ void ATangTangCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
+
+}
+
+void ATangTangCharacter::InitializeHUD()
+{
 	TangTangPlayerController = Cast<ATangTangPlayerController>(GetController());
 	if (TangTangPlayerController)
 	{
@@ -230,28 +211,53 @@ void ATangTangCharacter::HUDExp(float GetExp)
 
 void ATangTangCharacter::Skill1Info()
 {
-	if (TangTangPlayerController == nullptr) return;
-	if (CharacterSkill.Num() < 0) return;
-	if(SkillNumber.Num()>0) SkillNumber.Empty();
-		
-	for (int32 i = 0; i < 100; i++)
+	if (TangTangPlayerController && CharacterSkill.Num() > 0)
 	{
-		const int32 SkillIndex = FMath::RandRange(0, CharacterSkill.Num() - 1);
-		SkillNumber.AddUnique(SkillIndex);
-		if (SkillNumber.Num() == 3) break;
-	}
-	for (int i = 0; i < 3; i++)
-	{
-		if (CharacterSkill[SkillNumber[i]].GetDefaultObject())
+		SkillNumber.Empty();
+
+		while (SkillNumber.Num() < 3)
 		{
-			TangTangPlayerController->SetSkill(
-				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillImage(),
-				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillName(),
-				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillText(),
-				CharacterSkill[SkillNumber[i]].GetDefaultObject()->GetSkillLevel(),
-				i);
+			const int32 SkillIndex = FMath::RandRange(0, CharacterSkill.Num() - 1);
+			SkillNumber.AddUnique(SkillIndex);
+		}
+
+		for (int32 i = 0; i < SkillNumber.Num(); i++)
+		{
+			const int32 SelectedSkillIndex = SkillNumber[i];
+			const ASkill* SelectedSkill = CharacterSkill[SelectedSkillIndex].GetDefaultObject();
+
+			if (SelectedSkill)
+			{
+				TangTangPlayerController->SetSkill(
+					SelectedSkill->GetSkillImage(),
+					SelectedSkill->GetSkillName(),
+					SelectedSkill->GetSkillText(),
+					SelectedSkill->GetSkillLevel(),
+					i
+				);
+			}
 		}
 	}
+}
+
+void ATangTangCharacter::LevelUp()
+{
+	PlayerLevel++;
+	PlayerExp = 0;
+	PlayerMaxExp *= PlayerLevel;
+	UpdateHUDExpBar();
+
+	if (TangTangPlayerController)
+	{
+		TangTangPlayerController->CreateSkillWidget();
+		Skill1Info();
+	}
+}
+
+void ATangTangCharacter::UpdateHUDExpBar()
+{
+	float ExpRatio = PlayerExp / PlayerMaxExp;
+	HUDExp(ExpRatio);
 }
 
 void ATangTangCharacter::SpawnTornado()
@@ -296,20 +302,13 @@ void ATangTangCharacter::SpawnMolotovcoktail()
 void ATangTangCharacter::SpawnMolotovcoktailTimer()
 {
 	GetWorldTimerManager().SetTimer(MolotovcocktailTimer, this, &ATangTangCharacter::SpawnMolotovcoktail, 1 / MolotovcocktailDelay, true, 4.f);
-
 }
-
-///////////////////////////////F///////////////////////////////////////////
-// Input
 
 void ATangTangCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
-		// Moving
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{	
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATangTangCharacter::Move);
-
 	}
 	else
 	{
@@ -319,51 +318,51 @@ void ATangTangCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void ATangTangCharacter::SpawnLightning()
 {
-	if (LightningClass)
+	if (!LightningClass || LightningLevel <= 0)
 	{
-		for (int32 i = 0; i < LightningLevel; i++)
+		return;
+	}
+
+	for (int32 i = 0; i < LightningLevel; i++)
+	{
+		if (LightningBox)
 		{
 			FVector LightningSpawnPoint = UKismetMathLibrary::RandomPointInBoundingBox(
 				LightningBox->GetComponentLocation(), LightningBox->GetScaledBoxExtent()
 			);
+
 			ALightning* Lightning = GetWorld()->SpawnActor<ALightning>(LightningClass, FTransform(LightningSpawnPoint));
-			if (Lightning) Lightning->SetLifeSpan(1.f);
-			if (LightningSound)
+			if (Lightning)
 			{
-				UGameplayStatics::PlaySound2D(this, LightningSound);
+				Lightning->SetLifeSpan(1.f);
 			}
+		}
+
+		if (LightningSound)
+		{
+			UGameplayStatics::PlaySound2D(this, LightningSound);
 		}
 	}
 }
 
 void ATangTangCharacter::SpawnLightningTimer()
 {
-	GetWorldTimerManager().SetTimer(
-		LightningTimer,
-		this,
-		&ATangTangCharacter::SpawnLightning,
-		1 / LightningTimeDelay,
-		true, 5.f);
+	GetWorldTimerManager().SetTimer(LightningTimer,	this,&ATangTangCharacter::SpawnLightning, 1 / LightningTimeDelay,true, 5.f);
 }
 
 void ATangTangCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
-		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}

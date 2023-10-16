@@ -13,16 +13,6 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 
-UENUM(BlueprintType)
-enum class ESkillName : uint8
-{
-	ESN_Guardian UMETA(Display = "Guardian"),
-	ESN_ProjectilePlus UMETA(Display = "ProjectilePlus"),
-	ESN_ProjectileSpeedUp UMETA(Display = "ProjectileSpeedUp"),
-
-	ESN_Max UMETA(Display = "Max"),
-};
-
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
@@ -50,21 +40,25 @@ class ATangTangCharacter : public ACharacter
 public:
 	ATangTangCharacter();
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void GetDamage(float Damage);
 	virtual void GetExp(float Exp);
 	void GuardianSpawn();
 	void HUDHealth(float GetHealth);
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class ASkill>> CharacterSkill;
 
-	TArray<int32> SkillNumber;
+	/** 스킬 스폰*/
 	void SpawnLightning();
 	void SpawnLightningTimer();
 	void SpawnTornado();
 	void SpawnTornadoTimer();
 	void SpawnMolotovcoktail();
 	void SpawnMolotovcoktailTimer();
-	
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class ASkill>> CharacterSkill;
+
+	TArray<int32> SkillNumber;
+
 protected:
 
 	/** Called for movement input */
@@ -75,7 +69,17 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
 private:
+	void SetupInputMappingContext();
+	void InitializeHUD();
+	void WorldTime();
+	void Die();
+	void HUDExp(float GetExp);
+	void Skill1Info();
+	void LevelUp();
+	void UpdateHUDExpBar();
+
 	/** 플에이어 체력*/
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.f;
@@ -103,12 +107,6 @@ private:
 	UPROPERTY()
 	class UCharacterOverlay* CharacterOverlay;
 
-
-	void WorldTime();
-	void Die();
-	void HUDExp(float GetExp);
-	void Skill1Info();
-
 	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess = "true"))
 	bool EnemyOverlap = false;
 
@@ -121,8 +119,6 @@ private:
 	class UTexture2D* CharacterSkillImage;
 	FString CharacterSkillName;
 	FString CharacterSkillText;
-
-	ESkillName SkillName;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AGuardian> GuardianClass;
@@ -147,26 +143,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* LightningSound;
+	/** /번개 스킬*/
 
 
 	/** 토네이토 스킬*/
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UArrowComponent*> TornadoArrowComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* TornadoArrowComponent1;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* TornadoArrowComponent2;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* TornadoArrowComponent3;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* TornadoArrowComponent4;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* TornadoArrowComponent5;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ATornado> TornadoClass;
@@ -181,25 +163,11 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* TornadoSound;
+	/** /토네이토 스킬*/
 
 	/** 화염병 스킬*/
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UArrowComponent*> MolotovococktailArrowComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* MolotovococktailArrowComponent1;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* MolotovococktailArrowComponent2;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* MolotovococktailArrowComponent3;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* MolotovococktailArrowComponent4;
-
-	UPROPERTY(VisibleAnywhere)
-	class UArrowComponent* MolotovococktailArrowComponent5;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AMolotovcocktail> MolotovcocktailClass;
@@ -214,7 +182,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* MolotovcocktailSound;
-
+	/** /화염병 스킬*/
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -222,7 +190,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	FORCEINLINE bool GetEnemyOverlap() const { return EnemyOverlap; }
+	FORCEINLINE bool GetIsEnemyOverlapping() const { return EnemyOverlap; }
 	FORCEINLINE void SetEnemyOverlap(bool Overlap) { EnemyOverlap = Overlap; }
 	FORCEINLINE int32 GetOverlapNum() const { return OverlapNum; }
 	FORCEINLINE float GetPlayerMaxExp() const { return PlayerMaxExp; }

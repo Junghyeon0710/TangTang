@@ -39,7 +39,8 @@ void AEnemy::BoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 			Character->SetEnemyOverlap(true);
 			Character->IncreaseOverlapNum();
 			Attack();
-			GetWorldTimerManager().SetTimer(AttackTimer, this, &AEnemy::Attack, 1/ TimeBasedDamage, true); //1초마다 어택함수 호출
+			int32 OverlapinEnemyNum = Character->GetOverlapNum();
+			GetWorldTimerManager().SetTimer(AttackTimer, this, &AEnemy::Attack, 1/ (TimeBasedDamage* OverlapinEnemyNum), true); //1초마다 어택함수 호출
 		}
 	}
 }
@@ -50,18 +51,14 @@ void AEnemy::BoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{
 		Character = Cast<ATangTangCharacter>(OtherActor);
 	
-		if (Character && Character->GetEnemyOverlap())
+		if (Character && Character->GetIsEnemyOverlapping())
 		{
-			Character->SetEnemyOverlap(false);
 			Character->DecreaseOverlapNum();
 			if (Character->GetOverlapNum() <= 0)
 			{
+				Character->SetEnemyOverlap(false);
 				GetWorldTimerManager().ClearTimer(AttackTimer);
 			}
-		}
-		if (Character->GetOverlapNum() > 0)
-		{
-			Character->SetEnemyOverlap(true);
 		}
 	}
 }
@@ -81,7 +78,7 @@ void AEnemy::EnemyDie()
 
 void AEnemy::Attack()
 {
-	if (Character && Character->GetEnemyOverlap())
+	if (Character && Character->GetIsEnemyOverlapping())
 	{
 		Character->GetDamage(EnemyDamage);
 	}
