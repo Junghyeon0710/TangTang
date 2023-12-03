@@ -27,8 +27,9 @@ void AHealth::SphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 
         if (Character)
         {
-            // Character의 체력을 업데이트
+            // Character의 체력을 업데이트   
             float NewHealth = (HealthIncrease + Character->GetHealth()) / Character->GetMaxHealth();
+            Character->SetHealth(Character->GetHealth() + HealthIncrease);
             Character->HUDHealth(NewHealth);
         }
 
