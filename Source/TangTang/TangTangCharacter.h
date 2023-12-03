@@ -191,6 +191,9 @@ private:
 	class USoundBase* MolotovcocktailSound;
 	/** /È­¿°º´ ½ºÅ³*/
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> DiewWidgetClass;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

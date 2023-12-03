@@ -21,6 +21,7 @@
 #include <SKill/Lightning.h>
 #include <Kismet/GameplayStatics.h>
 #include <Kismet/KismetMathLibrary.h>
+#include "Blueprint/UserWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -199,6 +200,12 @@ void ATangTangCharacter::HUDHealth(float GetHealth)
 void ATangTangCharacter::Die()
 {
 	Destroy();
+	if(MyHUD)
+	{
+		MyHUD->GetCharacterOverlay()->RemoveFromParent();
+	}
+	TangTangPlayerController->bShowMouseCursor = true;
+	CreateWidget(GetWorld(), DiewWidgetClass)->AddToViewport();
 }
 
 void ATangTangCharacter::HUDExp(float GetExp)
