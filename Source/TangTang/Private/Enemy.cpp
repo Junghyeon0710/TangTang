@@ -8,6 +8,7 @@
 #include <TangTang/TangTangCharacter.h>
 #include <Item/SpawnExp.h>
 
+
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -18,7 +19,13 @@ AEnemy::AEnemy()
 
 void AEnemy::GetHit(const float& Damage)
 {
-	EnemyDie();
+	EnemyHealth -= Damage;
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, GetActorTransform());
+	if (EnemyHealth <= 0)
+	{
+		AEnemy::DieNum++;
+		EnemyDie();
+	}
 }
 
 void AEnemy::BeginPlay()

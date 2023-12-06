@@ -104,6 +104,7 @@ void ATangTangCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 	WorldTime();
 }
 

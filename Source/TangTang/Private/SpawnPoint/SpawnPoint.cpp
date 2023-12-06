@@ -6,6 +6,7 @@
 #include <Enemy.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <Item/HealthBox.h>
+#include "../TangTangGameMode.h"
 
 ASpawnPoint::ASpawnPoint()
 {
@@ -27,8 +28,10 @@ void ASpawnPoint::SpawnEnemy()
 {
 	if (EnemyClass)
 	{
-		FVector BoxRandomPoint = UKismetMathLibrary::RandomPointInBoundingBox(SpawnPoint->GetComponentLocation(), SpawnPoint->GetScaledBoxExtent()); 
-		GetWorld()->SpawnActor<AEnemy>(EnemyClass, FTransform(BoxRandomPoint));
+		const FVector BoxRandomPoint = UKismetMathLibrary::RandomPointInBoundingBox(SpawnPoint->GetComponentLocation(), SpawnPoint->GetScaledBoxExtent()); 
+		
+		ATangTangGameMode* GameMode = GetWorld()->GetAuthGameMode<ATangTangGameMode>();
+		GameMode->SpawnEnemy(FTransform(BoxRandomPoint));
 	}
 }
 

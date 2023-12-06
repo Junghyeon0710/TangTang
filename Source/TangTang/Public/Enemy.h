@@ -69,4 +69,13 @@ private:
 
 	UPROPERTY()
 	class ASpawnExp* SpawnExp = SpawnExp;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* HitParticle;
+
+	
+
+public:
+	static int32 DieNum;
 };
+int32 AEnemy::DieNum = 0;

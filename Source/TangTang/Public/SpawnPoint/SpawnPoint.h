@@ -47,7 +47,7 @@ private:
 	/** 스폰 타이퍼*/
 	FTimerHandle HealthBoxSpawnTimer;
 
-	/** 1초에 적 몇명 스폰*/
+	/**체력회복 박스 몇초마다 스폰*/
 	UPROPERTY(EditAnywhere)
 	float HealthBoxSpawnTimeDelay = 180;
 
