@@ -19,10 +19,10 @@
 - Level(레벨 및 경험치 관리)
 - GetDamage(적한테 데미지를 입을 시)
 
-#### ArrowComponent를 캐릭터에 붙여 스킬 시작위치를 지정하는 방식을 사용하거나 수학을 통해 구현했습니다.
+#### ArrowComponent를 캐릭터에 붙여 스킬 시작위치를 지정하는 방식을 사용하거나 각 스킬 함수를 통해 구현했습니다.
 ![캡처](https://github.com/Junghyeon0710/TangTang/assets/133496610/53d67aa4-1a3a-4c64-82dd-4ece66c2cabd)
 
-****
+
 >Skill Info
 ### 레벨업을 할 시 선택할 수 있는 스킬 3개를 보여줘야하는데 어떻게 할지 고민하다가 스킬을 배열에 담아 랜덤으로 인덱스 값을 가져오는 방식으로 했습니다.
 ```C++
@@ -57,7 +57,7 @@ void ATangTangCharacter::Skill1Info()
 	}
 }
 ```
-****
+
 >레벨업
 ### 레벨업은 간단하게 경험치바를 2배로 올려주는 방식을 설정했습니다. 이렇게 하는 대신 적의 경험치는 점점 높아져야 할 것을 의미합니다..
 ```C++
@@ -80,10 +80,12 @@ void ATangTangCharacter::LevelUp()
 - Attach weapon(무기를 붙여줌)
 - SpawnProjectile(총알을 발사)
 
+>Weapon Blueprint
 #### ArrowComponet를 이용하여 블루프린트로 총알 위치를 원하는 위치로 구현할 수 있게 했습니다. 이렇게 하면 코드를 몰라도 위치를 지정할 수 있습니다.
 ![캡처](https://github.com/Junghyeon0710/TangTang/assets/133496610/8bb4eb84-e2cc-4c0d-b23f-7a0aa13079ea)
 #### ArrowComponet를 사용함으로써 방향을 알 수 있습니다.
 
 ## Skill
-####
+#### 스킬이 가지고 있어야 변수와 함수를 갖고 있는 스킬 부모 클래스
+
 
