@@ -1,5 +1,5 @@
-## Unreal5 : RunGame
-포트폴리오 목적으로 제작된 간단한 런게임입니다.
+## Unreal5 : TangTnag
+포트폴리오 목적으로 제작된 간단한 탕탕특공대 모작게임입니다.
 
 - 엔진 : Unreal Engine 5.3
 - IDE : Visual Studio 2022
